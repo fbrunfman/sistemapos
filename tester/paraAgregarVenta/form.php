@@ -10,7 +10,7 @@
 // conexion
 $servername = "localhost";
 $username = "root";
-$password = "root";
+$password = "";
 $dsn_Options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
 
 try {
@@ -40,7 +40,7 @@ $fechaPago = $_POST['fechaPago'];
 
 //agregar a base de datos (no esta funcionando!)
 
-$filaParaAgregar = $conn->prepare("INSERT INTO venta (cliente_id, concepto, importe, `numero de factura`, `fecha de venta`, iva, suss, ganancias, iibb, `ingreso final`, `fecha de pago`) VALUES (:nombre, :concepto, :importe, :numFactura, :fechaVenta, :iva, :suss, :ganancias, :iibb, :ingresoFinal, :fechaPago)");
+$filaParaAgregar = $conn->prepare("INSERT INTO venta (cliente_id, concepto, importe, `numero de factura`, `fecha de venta`, iva, suss, ganancias, iibb, `ingreso final`, `fecha de pago`) VALUES (:cliente_id, :concepto, :importe, :numFactura, :fechaVenta, :iva, :suss, :ganancias, :iibb, :ingresoFinal, :fechaPago)");
 $filaParaAgregar->bindParam(':cliente_id', $nombre);
 $filaParaAgregar->bindParam(':concepto', $concepto);
 $filaParaAgregar->bindParam(':importe', $importe);
