@@ -5,12 +5,13 @@
 	<title>Document</title>
 </head>
 <body>
+  
 <?php 
 
 // conexion
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "root";
 $dsn_Options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
 
 try {
@@ -37,11 +38,20 @@ $iibb = $_POST['iibb'];
 $ingresoFinal = $_POST['ingresoFinal'];
 $fechaPago = $_POST['fechaPago'];
 
+// query para buscar cliente_id (todo esto si el id existe)
 
-//agregar a base de datos (no esta funcionando!)
+$queryId = "SELECT id FROM cliente WHERE nombre = '" . $nombre . "'";
+$stmt = $conn->prepare($queryId);
+$stmt->execute();
+$result = $stmt->fetchAll();
+
+$cliente_id = $result[0][0];
+
+//agregar a base de datos
 
 $filaParaAgregar = $conn->prepare("INSERT INTO venta (cliente_id, concepto, importe, `numero de factura`, `fecha de venta`, iva, suss, ganancias, iibb, `ingreso final`, `fecha de pago`) VALUES (:cliente_id, :concepto, :importe, :numFactura, :fechaVenta, :iva, :suss, :ganancias, :iibb, :ingresoFinal, :fechaPago)");
-$filaParaAgregar->bindParam(':cliente_id', $nombre);
+
+$filaParaAgregar->bindParam(':cliente_id', $cliente_id);
 $filaParaAgregar->bindParam(':concepto', $concepto);
 $filaParaAgregar->bindParam(':importe', $importe);
 $filaParaAgregar->bindParam(':numFactura', $numFactura);
