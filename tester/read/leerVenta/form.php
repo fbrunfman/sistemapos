@@ -27,6 +27,8 @@ catch(PDOException $e)
 //inputs de detalle de la venta
 
 $nombre = $_POST['nombre'];
+$desde = $_POST['desde'];
+$hasta = $_POST['hasta'];
 
 // query para buscar cliente_id (todo esto si el id existe)
 
@@ -40,10 +42,28 @@ $cliente_id = $result[0][0];
 //query a venta
 
 
-$queryVenta = "SELECT * FROM venta WHERE cliente_id =" . $cliente_id;
-$stmt = $conn->prepare($queryVenta);
-$stmt->execute();
-$resultVenta = $stmt->fetchAll();
+if ($desde == '' && $hasta == '') {
+
+    $queryVenta = "SELECT * FROM venta WHERE cliente_id = " . $cliente_id;
+
+} else if ($desde == '') {
+
+    $queryVenta = "SELECT * FROM venta WHERE cliente_id = " . $cliente_id . " AND `fecha de venta` <= '" . $hasta . "'";
+
+} else if ($hasta == '') {
+
+    $queryVenta = "SELECT * FROM venta WHERE cliente_id = " . $cliente_id . " AND `fecha de venta` >= '" . $desde . "'";
+
+} else {
+
+    $queryVenta = "SELECT * FROM venta WHERE cliente_id = " . $cliente_id . " AND (`fecha de venta` BETWEEN '" . $desde . "' AND '" . $hasta . "')";
+
+}
+
+$stmt1 = $conn->prepare($queryVenta);
+$stmt1->execute();
+$resultVenta = $stmt1->fetchAll();
+
 
 for($i = 0; $i < count($resultVenta); ++$i) {
     echo "<br>Nombre del cliente: " . $nombre . "<br>Concepto: " . $resultVenta[$i]['concepto'] . "<br>Importe: " . $resultVenta[$i]['importe'] . "<br>Numero de factura: " . $resultVenta[$i]['numero de factura'] . "<br>Fecha de venta: " . $resultVenta[$i]['fecha de venta'] . "<br>IVA: " . $resultVenta[$i]['iva'] . "<br>Seguridad social: " . $resultVenta[$i]['suss'] . "<br>Impuesto a las ganancias: " . $resultVenta[$i]['ganancias'] . "<br>Ingresos brutos: " . $resultVenta[$i]['iibb'] . "<br>Ingreso final: " . $resultVenta[$i]['ingreso final'] . "<br>Fecha de pago: " . $resultVenta[$i]['fecha de pago'] . "<br><br>";

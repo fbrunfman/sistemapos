@@ -35,9 +35,8 @@ $stmt->execute();
 $result = $stmt->fetchALL();
 
 $cuit = $result[0]['cuit'];
-$tipoFacturacion = $result[0]['tipo de facturacion'];
 
-echo "<br>Nombre: " . $nombre . "<br>CUIT: " . $cuit . "<br>Tipo de facturaci&oacute;n: " . $tipoFacturacion;
+echo "<br>Nombre: " . $nombre . "<br>CUIT: " . $cuit;
 
 // se registro la fila o no
 
