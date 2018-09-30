@@ -39,20 +39,23 @@ $result = $stmt->fetchAll();
 
 $compraId = $result[0][0];
 
-//agregar a base de datos 
+//agregar a base de datos
 
-$filaParaAgregar = $conn->prepare("INSERT INTO pago (compra_id, `fecha de pago`, pago) VALUES (:compraId, :fechaPago, :pago)");
-$filaParaAgregar->bindParam(':compraId', $compraId);
-$filaParaAgregar->bindParam(':fechaPago', $fechaPago);
-$filaParaAgregar->bindParam(':pago', $pago);
 
-// se registro la fila o no
+$queryPago = "INSERT INTO pago (compra_id, `fecha de pago`, pago) VALUES (:compraId, :fechaPago, :pago)";
+$stmt1 = $conn->prepare($queryPago);
+$stmt1->bindParam(':compraId', $compraId);
+$stmt1->bindParam(':fechaPago', $fechaPago);
+$stmt1->bindParam(':pago', $pago);
+$stmt1->execute();
 
-if ($filaParaAgregar->execute()) {
-  echo "<br>Se registr&oacute; la nueva fila";
-} else {
-  echo "<br>Todo mal";
-}
+// query update
+
+$queryUpdate = "UPDATE compra SET `pago total` = `pago total` + " . $pago . " WHERE `razon social` = '" . $razSoc . "' AND `numero de factura` = '" . $numFactura . "'";
+
+$stmt2 = $conn->prepare($queryUpdate);
+$stmt2->execute();
+
 ?>
 	
 </body>
