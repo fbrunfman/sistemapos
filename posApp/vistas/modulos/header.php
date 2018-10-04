@@ -33,7 +33,7 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Salir</a>
+                  <a href="./logout.php" class="btn btn-default btn-flat">Salir</a>
                 </div>
               </li>
             </ul>

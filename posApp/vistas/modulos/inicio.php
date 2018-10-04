@@ -7,7 +7,7 @@
         <small>Panel de control</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-tachometer-alt"></i> Inicio</a></li>
+        <li><a href="inicio"><i class="fa fa-tachometer-alt"></i> Inicio</a></li>
         <li class="active">Tablero</li>
       </ol>
     </section>
