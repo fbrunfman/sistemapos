@@ -199,7 +199,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
               <input type="number" name="importe" class="form-control" placeholder="Ingresar importe" required>
 
@@ -212,7 +212,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
               <input type="text" name="numFactura" class="form-control" placeholder="Ingresar n&uacute;mero de factura" required>
 
@@ -225,7 +225,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
 
               <input type="date" name="fechaVenta" class="form-control" placeholder="Ingresar fecha de venta" required>
 
@@ -348,7 +348,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
               <input type="text" name="numFactura" class="form-control" placeholder="Ingresar n&uacute;mero de factura" required>
 
@@ -363,7 +363,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
               <input type="number" name="iva" class="form-control" placeholder="Ingresar IVA" required>
 
@@ -377,7 +377,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
               <input type="number" name="suss" class="form-control" placeholder="Ingresar seguridad social" required>
 
@@ -390,7 +390,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
               <input type="number" name="ganancias" class="form-control" placeholder="Ingresar ganancias" required>
 
@@ -403,7 +403,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
               <input type="number" name="iibb" class="form-control" placeholder="Ingresar ingresos brutos" required>
 
@@ -416,7 +416,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
               <input type="number" name="ingresoFinal" class="form-control" placeholder="Ingresar ingreso final" required>
 
@@ -429,7 +429,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
 
               <input type="date" name="fechaPago" class="form-control" placeholder="Ingresar fecha de pago" required>
 

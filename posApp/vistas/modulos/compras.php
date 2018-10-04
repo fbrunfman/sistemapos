@@ -105,20 +105,39 @@
 
                if (isset($_POST["agregarPago"])) {
 
-                  $queryClienteId = "SELECT id from cliente WHERE nombre='" . $_POST["nombre"] . "'";
-                  $stmt = $conn->prepare($queryClienteId);
+                  $razSoc = $_POST["razSoc"];
+                  $numFactura = $_POST["numFactura"];
+                  $medioPago = $_POST["medioPago"];
+                  $fechaPago = $_POST["fechaPago"];
+                  $pago = $_POST["pago"];
+
+                  $queryCompraId = "SELECT id FROM compra WHERE `razon social` ='" . $razSoc . "' AND `numero de factura` = '" . $numFactura . "'";
+                  $stmt = $conn->prepare($queryCompraId);
                   $stmt->execute();
                   $result = $stmt->fetchALL();
 
-                  $cliente_id = $result[0][0];
-
-
-                  $query = "UPDATE venta SET iva = " . $_POST["iva"] . ", suss = " . $_POST["suss"] . ", ganancias = " . $_POST["ganancias"] . ", iibb = " . $_POST["iibb"] . ", `ingreso final` = " . $_POST["ingresoFinal"] . ", `fecha de pago`= '" . $_POST["fechaPago"] . "' WHERE cliente_id = " . $cliente_id . " AND `numero de factura` ='" . $_POST["numFactura"] . "'";
+                  $compra_id = $result[0][0];
+                    
+                  $query = "INSERT INTO pago (compra_id, `medio de pago`, `fecha de pago`, pago) VALUES (:compra_id, :medioPago, :fechaPago, :pago)";
 
                   $stmt = $conn->prepare($query);
+                  $stmt->bindParam(":compra_id", $compra_id);
+                  $stmt->bindParam(":medioPago", $medioPago);
+                  $stmt->bindParam(":fechaPago", $fechaPago);
+                  $stmt->bindParam(":pago", $pago);
+
                   $stmt->execute(); 
 
+                  $queryActualizar = "UPDATE compra SET `pago total` = `pago total` + " . $pago . " WHERE id = " . $compra_id;
+
+                  $stmt1 = $conn->prepare($queryActualizar);
+                  $stmt1->execute();
+
+
                   echo "¡Pago agregado exitosamente!";
+
+
+                  
                  
                }
 
@@ -193,7 +212,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
               <input type="text" name="cuitCuil" class="form-control" placeholder="Ingresar CUIT/CUIL" required>
 
@@ -206,7 +225,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
               <input type="text" name="numFactura" class="form-control" placeholder="Ingresar n&uacute;mero de factura" required>
 
@@ -219,19 +238,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
-
-              <input type="date" name="fecha" class="form-control" placeholder="Ingresar fecha de compra" required>
-
-            </div>
-
-          </div>
-
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
               <input type="text" name="tipoFactura" class="form-control" placeholder="Ingresar tipo de factura" required>
 
@@ -239,11 +246,25 @@
 
           </div>
 
+
           <div class="form-group">
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+              <input type="date" name="fecha" class="form-control" placeholder="Ingresar fecha de compra" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
               <input type="number" name="importeTotal" class="form-control" placeholder="Ingresar importe total" required>
 
@@ -255,9 +276,9 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
-              <input type="number" name="pagoTotal" class="form-control" placeholder="Ingresar pago" value=0 required>
+              <input type="number" name="pagoTotal" class="form-control" placeholder="Ingresar pago (dejalo en 0 si todav&iacute;a no fue efectuado)" required>
 
             </div>
 
@@ -373,7 +394,7 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre del cliente" required>
+              <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social" required>
 
             </div>
 
@@ -385,7 +406,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
               <input type="text" name="numFactura" class="form-control" placeholder="Ingresar n&uacute;mero de factura" required>
 
@@ -400,9 +421,9 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
-              <input type="number" name="iva" class="form-control" placeholder="Ingresar IVA" required>
+              <input type="number" name="pago" class="form-control" placeholder="Ingresar monto del pago" required>
 
             </div>
 
@@ -414,22 +435,9 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-money-check"></i></span>
 
-              <input type="number" name="suss" class="form-control" placeholder="Ingresar seguridad social" required>
-
-            </div>
-
-            
-          </div>
-
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
-
-              <input type="number" name="ganancias" class="form-control" placeholder="Ingresar ganancias" required>
+              <input type="text" name="medioPago" class="form-control" placeholder="Ingresar medio de pago" required>
 
             </div>
 
@@ -440,33 +448,7 @@
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
-
-              <input type="number" name="iibb" class="form-control" placeholder="Ingresar ingresos brutos" required>
-
-            </div>
-
-            
-          </div>
-
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
-
-              <input type="number" name="ingresoFinal" class="form-control" placeholder="Ingresar ingreso final" required>
-
-            </div>
-
-            
-          </div>
-
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
 
               <input type="date" name="fechaPago" class="form-control" placeholder="Ingresar fecha de pago" required>
 
@@ -474,6 +456,10 @@
 
             
           </div>
+
+          
+
+         
 
         </div>
 
