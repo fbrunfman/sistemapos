@@ -90,15 +90,126 @@
 
                if (isset($_POST["consultar"])) {
 
-                  $query = "SELECT * FROM cliente WHERE nombre='" . $_POST["nombreConsulta"] . "'";
+                  $razSoc = $_POST["razSoc"];
+                  $queCompras = $_POST["queCompras"];
+                  $queFactura = $_POST["queFactura"];
+                  $desde = $_POST["desde"];
+                  $hasta = $_POST["hasta"];
+                  $importes = $_POST["importes"];
+                  $queryVenta = "";
 
-                  $stmt = $conn->prepare($query);
-                  $stmt->execute(); 
+                  //query a venta
 
-                  $result = $stmt->fetchALL();
 
-                  echo "Nombre: " . $result[0][1] . "<br>" .
-                  "CUIT: " .  $result[0][2];
+                  if ($desde == '' && $hasta == '') {
+
+                      $queryCompra = "SELECT * FROM compra";
+
+                  } else if ($desde == '') {
+
+                      $queryCompra = "SELECT * FROM compra WHERE fecha <= '" . $hasta . "'";
+
+                  } else if ($hasta == '') {
+
+                      $queryCompra = "SELECT * FROM compra WHERE fecha >= '" . $desde . "'";
+
+                  } else {
+
+                      $queryCompra = "SELECT * FROM compra WHERE fecha BETWEEN '" . $desde . "' AND '" . $hasta . "'";
+
+                  }
+
+                  if ($razSoc !== '') {
+
+
+                    if (strlen($queryCompra) == 20) {
+
+                      $queryCompra .= " WHERE `razon social` = '" . $razSoc . "'";
+
+                    } else {
+
+                      $queryCompra .= " AND `razon social` = '" . $razSoc . "'";
+
+                    }
+
+                  }
+
+                  $stmt1 = $conn->prepare($queryCompra);
+                  $stmt1->execute();
+                  $resultCompra = $stmt1->fetchAll();
+
+
+                  if ($queCompras == "pagas") {
+
+                    for ($i=0; $i < count($resultCompra) ; $i++) { 
+                      
+                      if ($resultCompra[$i]["importe total"] > $resultCompra[$i]["pago total"]){
+
+                        $resultCompra[$i] = NULL;
+
+                      }
+
+                    }
+
+                  } else if ($queCompras == "noPagas") {
+
+                    for ($i=0; $i < count($resultCompra) ; $i++) { 
+                      
+                      if ($resultCompra[$i]["importe total"] <= $resultCompra[$i]["pago total"]){
+
+                        $resultCompra[$i] = NULL;
+
+                      }
+
+                    }
+
+                  }
+
+                  if ($queFactura == "A") {
+
+                    for ($i=0; $i < count($resultCompra) ; $i++) { 
+                      
+                      if ($resultCompra[$i]["tipo de factura"] == "B" || $resultCompra[$i]["tipo de factura"] == "C"){
+
+                        $resultCompra[$i] = NULL;
+
+                      }
+
+                    }
+
+                  } else if ($queFactura == "C") {
+
+                    for ($i=0; $i < count($resultCompra) ; $i++) { 
+                      
+                      if ($resultCompra[$i]["tipo de factura"] == "A" || $resultCompra[$i]["tipo de factura"] == "B"){
+
+                        $resultCompra[$i] = NULL;
+
+                      }
+
+                    }
+
+                  }
+
+                 
+
+                 $consulta = "";
+                 $sumaImportes = 0;
+                 $sumaIngresosFinales = 0;
+
+                 for ($i=0; $i < count($resultCompra); $i++) { 
+                   if (!is_null($resultCompra[$i])) {
+                    $consulta .= "Nombre de fantasia: " . $resultCompra[$i]["nombre de fantasia"] . ", " . "raz&oacute;n social: " . $resultCompra[$i]["razon social"] . ", " . "CUIT/CUIL: " . $resultCompra[$i]["cuit cuil"] . ", " . "n&uacute;mero de factura: " . $resultCompra[$i]["numero de factura"] . ", " . "fecha de compra: " . $resultCompra[$i]["fecha"] . ", " . "tipo de factura: " . $resultCompra[$i]["tipo de factura"] . ", " . "importe total: " . $resultCompra[$i]["importe total"] . ", " . "pago: " . $resultCompra[$i]["pago total"] . "<br><br>";
+                    $sumaImportes += $resultCompra[$i]["importe total"];
+                   }      
+                   
+                 }
+
+                 if ($importes) {
+                  $consulta .= $sumaImportes . "<br>";
+                 }
+
+                 echo $consulta;
                  
                }
 
@@ -151,7 +262,7 @@
         ?>
 
           
-        </div>
+        
         </div>
         
       </div>
@@ -320,13 +431,13 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="consultar">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
         <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-        <h4 class="modal-title">Consultar datos de la compra</h4>
+        <h4 class="modal-title">Consultar datos de la venta</h4>
 
       </div>
 
@@ -340,11 +451,93 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre" required>
+              <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social o dejar en blanco si desea consultar mediante otros par&aacute;metros">
 
             </div>
 
-            
+          </div>
+
+          <br>
+
+          
+          <div class="form-group">
+
+            <div class="input-group">
+
+              
+
+               <select name="queCompras" form="consultar">
+                <option value="todas">Todas las compras</option>
+                <option value="noPagas">S&oacute;lo compras no pagadas</option>
+                <option value="pagas">S&oacute;lo compras pagadas</option>
+              </select> 
+
+            </div>
+
+          </div>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              
+
+               <select name="queFactura" form="consultar">
+                <option value="todas">Todas los tipo de factura</option>
+                <option value="A">S&oacute;lo facturas A</option>
+                <option value="C">S&oacute;lo facturas C</option>
+              </select> 
+
+            </div>
+
+          </div>
+
+
+          Desde
+
+          <br><br>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+              <input type="date" name="desde" class="form-control" placeholder="Desde">
+
+            </div>
+
+          </div>
+
+          Hasta
+
+          <br><br>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+              <input type="date" name="hasta" class="form-control" placeholder="Hasta">
+
+            </div>
+
+          </div>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              
+
+              Incluir suma de importes
+
+              <input type="checkbox" name="importes">
+
+            </div>
 
           </div>
 

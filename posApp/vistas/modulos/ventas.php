@@ -94,15 +94,112 @@
 
                if (isset($_POST["consultar"])) {
 
-                  $query = "SELECT * FROM cliente WHERE nombre='" . $_POST["nombreConsulta"] . "'";
+                  $nombreConsulta = $_POST["nombreConsulta"];
+                  $queVentas = $_POST["queVentas"];
+                  $desde = $_POST["desde"];
+                  $hasta = $_POST["hasta"];
+                  $importes = $_POST["importes"];
+                  $ingresosFinales = $_POST["ingresosFinales"];
+                  $queryVenta = "";
 
-                  $stmt = $conn->prepare($query);
-                  $stmt->execute(); 
+                  //query a venta
 
-                  $result = $stmt->fetchALL();
 
-                  echo "Nombre: " . $result[0][1] . "<br>" .
-                  "CUIT: " .  $result[0][2];
+                  if ($desde == '' && $hasta == '') {
+
+                      $queryVenta = "SELECT * FROM venta";
+
+                  } else if ($desde == '') {
+
+                      $queryVenta = "SELECT * FROM venta WHERE `fecha de venta` <= '" . $hasta . "'";
+
+                  } else if ($hasta == '') {
+
+                      $queryVenta = "SELECT * FROM venta WHERE `fecha de venta` >= '" . $desde . "'";
+
+                  } else {
+
+                      $queryVenta = "SELECT * FROM venta WHERE `fecha de venta` BETWEEN '" . $desde . "' AND '" . $hasta . "'";
+
+                  }
+
+                  if ($nombreConsulta !== '') {
+
+                    $queryId = "SELECT id FROM cliente WHERE nombre = '" . $nombreConsulta . "'";
+                    $stmt = $conn->prepare($queryId);
+                    $stmt->execute();
+                    $result = $stmt->fetchAll();
+
+                    $cliente_id = $result[0][0];
+
+                    if (strlen($queryVenta) == 19) {
+
+                      $queryVenta .= " WHERE cliente_id =" . $cliente_id;
+
+                    } else {
+
+                      $queryVenta .= " AND cliente_id =" . $cliente_id ;
+
+                    }
+
+                  }
+
+                  $stmt1 = $conn->prepare($queryVenta);
+                  $stmt1->execute();
+                  $resultVenta = $stmt1->fetchAll();
+
+
+                  if ($queVentas == "pagas") {
+
+
+                    for ($i=0; $i < count($resultVenta) ; $i++) { 
+                      
+                      if (is_null($resultVenta[$i]["fecha de pago"])){
+
+                        $resultVenta[$i] = NULL;
+
+                      }
+
+                    }
+
+                  } else if ($queVentas == "noPagas") {
+
+                    for ($i=0; $i < count($resultVenta) ; $i++) { 
+                      
+                      if (!is_null($resultVenta[$i]["fecha de pago"])){
+
+                        $resultVenta[$i] = NULL;
+
+                      }
+
+                    }
+
+                  }
+
+                 
+
+                 $consulta = "";
+                 $sumaImportes = 0;
+                 $sumaIngresosFinales = 0;
+
+                 for ($i=0; $i < count($resultVenta); $i++) { 
+                   if (!is_null($resultVenta[$i])) {
+                    $consulta .= $resultVenta[$i]["cliente_id"] . " " . $resultVenta[$i]["concepto"] . " " . $resultVenta[$i]["importe"] . " " . $resultVenta[$i]["numero de factura"] . " " . $resultVenta[$i]["cliente_id"] . " " . $resultVenta[$i]["fecha de venta"] . " " . $resultVenta[$i]["iva"] . " " . $resultVenta[$i]["suss"] . " " . $resultVenta[$i]["ganancias"] . " " . $resultVenta[$i]["iibb"] . " " . $resultVenta[$i]["ingreso final"] . " " . "<br><br>";
+                    $sumaImportes += $resultVenta[$i]["importe"];
+                    $sumaIngresosFinales += $resultVenta[$i]["ingreso final"];
+                   }      
+                   
+                 }
+
+                 if ($importes) {
+                  $consulta .= $sumaImportes . "<br>";
+                 }
+
+                 if ($ingresosFinales) {
+                  $consulta .= $sumaIngresosFinales . "<br>";
+                 }
+
+                 echo $consulta;
                  
                }
 
@@ -136,7 +233,7 @@
         ?>
 
           
-        </div>
+        
         </div>
         
       </div>
@@ -262,13 +359,13 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="consultar">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
         <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-        <h4 class="modal-title">Consultar datos de la venta</h4>
+        <h4 class="modal-title">Consultar datos de venta</h4>
 
       </div>
 
@@ -282,13 +379,95 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre" required>
+              <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre o dejar en blanco si desea consultar mediante otros par&aacute;metros">
 
             </div>
 
-            
+          </div>
+
+          <br>
+
+          
+          <div class="form-group">
+
+            <div class="input-group">
+
+              
+
+               <select name="queVentas" form="consultar">
+                <option value="todas">Todas las ventas</option>
+                <option value="noPagas">S&oacute;lo ventas no pagadas</option>
+                <option value="pagas">S&oacute;lo ventas pagadas</option>
+              </select> 
+
+            </div>
 
           </div>
+
+
+          Desde
+
+          <br><br>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+              <input type="date" name="desde" class="form-control" placeholder="Desde">
+
+            </div>
+
+          </div>
+
+          Hasta
+
+          <br><br>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+              <input type="date" name="hasta" class="form-control" placeholder="Hasta">
+
+            </div>
+
+          </div>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              
+
+              Incluir suma de importes
+
+              <input type="checkbox" name="importes">
+
+            </div>
+
+          </div>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              
+
+              Incluir suma de ingresos finales
+
+              <input type="checkbox" name="ingresosFinales">
+
+            </div>
+
+          </div>
+
+
 
         </div>
 
