@@ -38,11 +38,14 @@
         <div class="box-body">
 
           <table class="table table-bordered table-striped tabla table-responsive">
-            
+          <tr> 
+          <th>Nombre</th>
+          <th>CUIT</th>
+          </tr>
+          
 
-          </table>
 
-
+          
           <?php 
 
             $servername = "localhost";
@@ -63,7 +66,8 @@
                   $stmt->bindParam(":cuit", $_POST["cuit"]);
                   $stmt->execute(); 
 
-                  echo "¡Cliente agregado exitosamente!";
+                  echo "¡Cliente agregado exitosamente!<br>";
+                  
 
                }
 
@@ -77,8 +81,8 @@
 
                   $result = $stmt->fetchALL();
 
-                  echo "Nombre: " . $result[0][1] . "<br>" .
-                  "CUIT: " .  $result[0][2];
+                  echo "<tr><td>" . $result[0][1] . "</td><br>" .
+                  "<td>" .  $result[0][2] . "</td></tr>";
                  
                }
 
@@ -91,6 +95,7 @@
 
         ?>
 
+        </table>
           
         
         </div>

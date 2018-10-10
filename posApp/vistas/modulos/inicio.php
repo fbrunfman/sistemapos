@@ -1,3 +1,30 @@
+<script>
+  
+  $(document).ready(function(){
+
+    $(".borrar").click(function(){
+
+      var name = $(this).attr("name");
+
+      console.log(name);
+
+      var data = {"name" : name};
+
+      console.log(data);
+
+      $.post("/delete.php", data, function(response){
+        alert(response);
+      });
+
+      $(this).parent().parent().remove();
+
+    });
+  
+
+  });
+
+</script>
+
 <div class="content-wrapper">
 <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -37,92 +64,68 @@
               <ul class="todo-list" data-widget="todo-list" id="list">
                 <?php 
 
-                  ob_start();
+                include_once("conexion.php");
 
-                  $servername = "localhost";
-                  $username = "root";
-                  $password = "root";
-                  $dsn_Options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+                 conectar();
 
-                  try {
+                 global $conn;
 
-                      $conn = new PDO("mysql:host=$servername;dbname=sistemapos", $username, $password, $dsn_Options);
-                      $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                 // mostrar todo's de la bd
 
-                      $query = "SELECT * FROM todo";
-                      $stmt = $conn->prepare($query);
-                      $stmt ->execute();
-                      $result = $stmt->fetchALL();
+                 $query = "SELECT * FROM todo";
 
-                      for ($i=0; $i < count($result); $i++) { 
-                        echo '<li>
-                          <!-- drag handle -->
-                          <span class="handle">
-                                <i class="fa fa-ellipsis-v"></i>
-                                <i class="fa fa-ellipsis-v"></i>
-                              </span>
-                          <!-- checkbox -->
-                          <input type="checkbox" value="">
-                          <!-- todo text -->
-                          <span class="text">' . $result[$i][1] . '</span>
-                          <!-- Emphasis label -->
-                          <!-- General tools such as edit or delete-->
-                          <div class="tools">
-                            <i class="fa fa-edit"></i>
-                            <i class="fa fa-trash"></i>
-                          </div>
-                        </li>';
+                 $stmt = $conn->prepare($query);
 
+                 $stmt->execute();
 
+                 $result = $stmt->fetchALL();
 
-                      }
-
-                      if(isset($_POST["agregar"])) {
-
-
-                        
-                          $query = "INSERT INTO todo (todo) VALUES ('" . $_POST["nota"] . "')";
-                          $stmt = $conn->prepare($query);
-                          $stmt->execute();
-
-
-
-                          echo '<li>
-                            <!-- drag handle -->
-                            <span class="handle">
-                                  <i class="fa fa-ellipsis-v"></i>
-                                  <i class="fa fa-ellipsis-v"></i>
-                                </span>
-                            <!-- checkbox -->
-                            <input type="checkbox" value="">
-                            <!-- todo text -->
-                            <span class="text">' . $_POST["nota"] . '</span>
-                            <!-- Emphasis label -->
-                            <!-- General tools such as edit or delete-->
-                            <div class="tools">
-                              <i class="fa fa-edit"></i>
-                              <i class="fa fa-trash"></i>
-                            </div>
-                          </li>';
-
-
-
-                          
-
-
-                      }
-
-
+                 for ($i=0; $i < count($result) ; $i++) { 
+                     echo '<li>
+                    <!-- drag handle -->
+                    <span class="handle">
+                          <i class="fa fa-ellipsis-v"></i>
+                          <i class="fa fa-ellipsis-v"></i>
+                        </span>
+                    <!-- checkbox -->
+                    <input type="checkbox" value="">
+                    <!-- todo text -->
                       
+                    <span class="text" name="notaBorrar">' . $result[$i][1] . '</span>
+                    <!-- General tools such as edit or delete-->
+                    <div class="tools">
+                        <button class="borrar" name="' . $result[$i][1] . '"><i class="fa fa-trash"></i></button>
+                    </div>
+                  </li>';
+                 }
+
+                 // agregar todo
+
+                 if(isset($_POST["agregar"])){
+
+                    $queryAdd = "INSERT INTO todo (todo) VALUES (:nota)";
+                    $stmt1 = $conn->prepare($queryAdd);
+                    $stmt1->bindParam(":nota", $_POST["nota"]);
+                    $stmt1->execute();
+
+                    echo '<li>
+                    <!-- drag handle -->
+                    <span class="handle">
+                          <i class="fa fa-ellipsis-v"></i>
+                          <i class="fa fa-ellipsis-v"></i>
+                    </span>
+                    <span class="text" name="notaBorrar">' . $_POST["nota"] . '</span>
+                    <!-- General tools such as edit or delete-->
+                    <div class="tools">
                       
-                    }
+                        <button class="borrar" name="' . $_POST["nota"] . '"><i class="fa fa-trash"></i></button>
+                      
+                    </div>                 
+                    </li>';
 
-                      catch(PDOException $e)
-                        {
-                        echo $message = $e->getMessage();
-                        }
+                 }
 
-                      ?>
+                ?>
 
                   
               </ul>

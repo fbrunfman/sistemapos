@@ -47,10 +47,21 @@
 
         <div class="box-body">
 
-          <table class="table table-bordered table-striped tabla table-responsive">
+          <table class="table table-bordered table-striped tabla">
+
+            <tr>
+              <th>Nombre de fantasia</th>
+              <th>Raz&oacute;n social</th>
+              <th>CUIT/CUIL</th>
+              <th>N&uacute;mero de factura</th>
+              <th>Fecha de compra</th>
+              <th>Tipo de factura</th>
+              <th>Importe total</th>
+              <th>Pago</th>
+            </tr>
             
 
-          </table>
+          
 
 
           <?php 
@@ -199,15 +210,15 @@
 
                  for ($i=0; $i < count($resultCompra); $i++) { 
                    if (!is_null($resultCompra[$i])) {
-                    $consulta .= "Nombre de fantasia: " . $resultCompra[$i]["nombre de fantasia"] . ", " . "raz&oacute;n social: " . $resultCompra[$i]["razon social"] . ", " . "CUIT/CUIL: " . $resultCompra[$i]["cuit cuil"] . ", " . "n&uacute;mero de factura: " . $resultCompra[$i]["numero de factura"] . ", " . "fecha de compra: " . $resultCompra[$i]["fecha"] . ", " . "tipo de factura: " . $resultCompra[$i]["tipo de factura"] . ", " . "importe total: " . $resultCompra[$i]["importe total"] . ", " . "pago: " . $resultCompra[$i]["pago total"] . "<br><br>";
+                    $consulta .=  "<tr><td>" . $resultCompra[$i]["nombre de fantasia"] . "</td><td>" . $resultCompra[$i]["razon social"] . "</td><td>" . $resultCompra[$i]["cuit cuil"] . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . $resultCompra[$i]["fecha"] . "</td><td>" . $resultCompra[$i]["tipo de factura"] . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
                     $sumaImportes += $resultCompra[$i]["importe total"];
                    }      
                    
                  }
 
-                 if ($importes) {
-                  $consulta .= $sumaImportes . "<br>";
-                 }
+                 // if ($importes) {
+                 //  $consulta .= $sumaImportes . "<br>";
+                 // }
 
                  echo $consulta;
                  
@@ -260,6 +271,8 @@
               }
 
         ?>
+
+        </table>
 
           
         
@@ -533,7 +546,7 @@
 
               
 
-              Incluir suma de importes
+              Incluir suma de importes totales&nbsp; 
 
               <input type="checkbox" name="importes">
 

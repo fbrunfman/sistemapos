@@ -48,9 +48,22 @@
         <div class="box-body">
 
           <table class="table table-bordered table-striped tabla table-responsive">
+
+            <tr>
+              <th>Nombre de cliente</th>
+              <th>Concepto</th>
+              <th>Importe</th>
+              <th>N&uacute;mero de factura</th>
+              <th>Fecha de venta</th>
+              <th>IVA</th>
+              <th>Seguridad social</th>
+              <th>Impuesto a las ganancias</th>
+              <th>Ingresos brutos</th>
+              <th>Ingreso final</th>
+            </tr>
             
 
-          </table>
+          
 
 
           <?php 
@@ -184,20 +197,20 @@
 
                  for ($i=0; $i < count($resultVenta); $i++) { 
                    if (!is_null($resultVenta[$i])) {
-                    $consulta .= $resultVenta[$i]["cliente_id"] . " " . $resultVenta[$i]["concepto"] . " " . $resultVenta[$i]["importe"] . " " . $resultVenta[$i]["numero de factura"] . " " . $resultVenta[$i]["cliente_id"] . " " . $resultVenta[$i]["fecha de venta"] . " " . $resultVenta[$i]["iva"] . " " . $resultVenta[$i]["suss"] . " " . $resultVenta[$i]["ganancias"] . " " . $resultVenta[$i]["iibb"] . " " . $resultVenta[$i]["ingreso final"] . " " . "<br><br>";
+                    $consulta .= "<tr><td>" . $resultVenta[$i]["cliente_id"] . "</td><td>" . $resultVenta[$i]["concepto"] . "</td><td>" . $resultVenta[$i]["importe"] . "</td><td>" . $resultVenta[$i]["numero de factura"] . "</td><td>" .  $resultVenta[$i]["fecha de venta"] . "</td><td>" . $resultVenta[$i]["iva"] . "</td><td>" . $resultVenta[$i]["suss"] . "</td><td>" . $resultVenta[$i]["ganancias"] . "</td><td>" . $resultVenta[$i]["iibb"] . "</td><td>" . $resultVenta[$i]["ingreso final"] . "</td></tr>";
                     $sumaImportes += $resultVenta[$i]["importe"];
                     $sumaIngresosFinales += $resultVenta[$i]["ingreso final"];
                    }      
                    
                  }
 
-                 if ($importes) {
-                  $consulta .= $sumaImportes . "<br>";
-                 }
+                 // if ($importes) {
+                 //  $consulta .= $sumaImportes . "<br>";
+                 // }
 
-                 if ($ingresosFinales) {
-                  $consulta .= $sumaIngresosFinales . "<br>";
-                 }
+                 // if ($ingresosFinales) {
+                 //  $consulta .= $sumaIngresosFinales . "<br>";
+                 // }
 
                  echo $consulta;
                  
@@ -231,6 +244,8 @@
               }
 
         ?>
+
+        </table>
 
           
         

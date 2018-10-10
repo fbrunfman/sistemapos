@@ -1,5 +1,3 @@
-Datatable
-
 $(".tabla").DataTable({
 
 	"language": {

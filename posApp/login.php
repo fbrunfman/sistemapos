@@ -4,7 +4,7 @@ session_start();
 
 	$servername = "localhost";
 	$username = "root";
-	$password = "";
+	$password = "root";
 	$dsn_Options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
 
 	try {
@@ -13,13 +13,11 @@ session_start();
 
     if (isset($_POST["login"])) {
 
-    	if (empty($_POST["usuario"]) || empty($_POST["password"])) { ?> 
+    	if (empty($_POST["usuario"]) || empty($_POST["password"])) {
 
-    		<div class="alert alert-danger" role="alert">
-  				Todos los campos son requeridos
-			</div>	
+    		$message = "Todos los campos son requeridos.";
 
-    	<?php } else {
+    	} else {
 
     		$query = "SELECT * FROM usuario WHERE nombre = :usuario AND contrasena = :password";
     		$stmt = $conn->prepare($query);
@@ -35,13 +33,11 @@ session_start();
     		if($count > 0){
     			$_SESSION["usuario"] = $_POST["usuario"];
     			header("location:inicio");
-    		} else { ?>
+    		} else {
 
-    			<div class="alert alert-danger" role="alert">
-  					Los campos son incorrectos
-				</div> <?php
+    			$message = "Valores incorrectos.";
 
-    		} 
+    		}
 
     	}
 
@@ -62,8 +58,6 @@ catch(PDOException $e)
 <head>
 	<meta charset="UTF-8">
 	<title>Login</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
 </head>
 <body>
 	<?php 
@@ -73,34 +67,17 @@ catch(PDOException $e)
 	}
 
 	?>
-
-	<h1>Sistema de facturación de B&S Eventos</h1>
-	<hr style="height: 12px;
-    border: 0;
-    box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5)">
-	<img src="vistas/img/bys-logo.png" alt="">
-
-<hr style="height: 12px;
-    border: 0;
-    box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5)">
+	<h1>Login</h1>
+		<form method="post" enctype="multipart/form-data">
+			<label>Usuario</label>
+			<input type="text" name="usuario" placeholder="Usuario" required>
+			<br><br>
+			<label>Contrase&ntilde;a</label>
+			<input type="password" placeholder="Contrase&ntilde;a" name="password">
+			<br><br>
+			<input type="submit" name="login" value="Login">
+		</form>
 	
-<form  method="post" enctype="multipart/form-data">
-			<div class="form-group">
-			<label for="exampleInputEmail1">Email address</label>
-			<input type="text" class="form-control" name="usuario" aria-describedby="emailHelp" placeholder="Usuario" required>
-		</div>
-		<div class="form-group">
-			<label for="exampleInputPassword1">Contraseña</label>
-			<input type="password" class="form-control" name="password" placeholder="Password">
-		</div>
-		<button type="submit" class="btn btn-primary" name="login" value="Login">Ingresá</button>
-</form>
-<br><br>
-
-<hr style="height: 12px;
-    border: 0;
-    box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5)">
-
-<h1>Lúcuma Diseño Web 2018 <span class="badge badge-secondary"></span></h1>
+	
 </body>
 </html>
