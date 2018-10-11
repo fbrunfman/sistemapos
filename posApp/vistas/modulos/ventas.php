@@ -25,15 +25,16 @@
 
           </button>
 
-          <br><br>
+          </div>
+        </div>
 
-          <button class="btn btn-primary" data-toggle="modal" data-target="#modalConsultaVenta">
-            
-            Consultar venta
+        <!-- Default box -->
+      
 
-          </button>
+          <!-- Default box -->
+      <div class="box">
 
-          <br><br>
+        <div class="box-header with-border">
 
           <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarPago">
             
@@ -44,8 +45,21 @@
 
         </div>
 
+        
+      </div>
 
-        <div class="box-body">
+      <div class="box">
+
+        <div class="box-header with-border">
+
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalConsultaVenta">
+            
+            Consultar venta
+
+          </button>
+
+                  
+          <div class="box-body">
 
           
 
@@ -245,13 +259,15 @@
               echo $message = $e->getMessage();
               }
 
-        ?>
+           ?>
 
           
         
         </div>
-        
+
+
       </div>
+    </div>
 
     </section>
 

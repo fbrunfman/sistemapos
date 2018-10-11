@@ -25,15 +25,14 @@
 
           </button>
 
-          <br><br>
+        </div>
+      </div>
 
-          <button class="btn btn-primary" data-toggle="modal" data-target="#modalConsultaCompra">
-            
-            Consultar compra
 
-          </button>
 
-          <br><br>
+      <div class="box">
+
+        <div class="box-header with-border">
 
           <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarPago">
             
@@ -44,6 +43,20 @@
 
         </div>
 
+
+        
+        
+      </div>
+
+      <div class="box">
+
+        <div class="box-header with-border">
+
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalConsultaCompra">
+            
+            Consultar compra
+
+          </button>
 
         <div class="box-body">
 
@@ -276,7 +289,8 @@
         ?>
  
         </div>
-        
+
+        </div>
       </div>
 
     </section>
