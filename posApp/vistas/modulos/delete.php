@@ -7,10 +7,10 @@
 	global $conn;
 
 
-	// $query = "DELETE FROM todo WHERE todo = '" . $_POST["name"] . "'";
-	// $stmt = $conn->prepare();
-	// $stmt->execute();
+	$query = "DELETE FROM todo WHERE todo = '" . $_POST["name"] . "'";
+	$stmt = $conn->prepare($query);
+	$stmt->execute();
 
-	echo "Success";
+	echo "Item borrado exitosamente";
 
 ?>

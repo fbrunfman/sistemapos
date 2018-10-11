@@ -47,21 +47,7 @@
 
         <div class="box-body">
 
-          <table class="table table-bordered table-striped tabla table-responsive">
-
-            <tr>
-              <th>Nombre de cliente</th>
-              <th>Concepto</th>
-              <th>Importe</th>
-              <th>N&uacute;mero de factura</th>
-              <th>Fecha de venta</th>
-              <th>IVA</th>
-              <th>Seguridad social</th>
-              <th>Impuesto a las ganancias</th>
-              <th>Ingresos brutos</th>
-              <th>Ingreso final</th>
-            </tr>
-            
+          
 
           
 
@@ -191,7 +177,23 @@
 
                  
 
-                 $consulta = "";
+                 $consulta = '<table class="table table-bordered table-striped tabla table-responsive">
+                  <thead>
+                  <tr>
+                    <th>Nombre de cliente</th>
+                    <th>Concepto</th>
+                    <th>Importe</th>
+                    <th>N&uacute;mero de factura</th>
+                    <th>Fecha de venta</th>
+                    <th>IVA</th>
+                    <th>Seguridad social</th>
+                    <th>Impuesto a las ganancias</th>
+                    <th>Ingresos brutos</th>
+                    <th>Ingreso final</th>
+                  </tr>
+                  </thead>
+                  <tbody>';
+
                  $sumaImportes = 0;
                  $sumaIngresosFinales = 0;
 
@@ -212,7 +214,7 @@
                  //  $consulta .= $sumaIngresosFinales . "<br>";
                  // }
 
-                 echo $consulta;
+                 echo $consulta . '</tbody></table>';
                  
                }
 
@@ -244,8 +246,6 @@
               }
 
         ?>
-
-        </table>
 
           
         

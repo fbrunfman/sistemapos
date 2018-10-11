@@ -37,13 +37,7 @@
         </div>
         <div class="box-body">
 
-          <table class="table table-bordered table-striped tabla table-responsive">
-          <tr> 
-          <th>Nombre</th>
-          <th>CUIT</th>
-          </tr>
           
-
 
           
           <?php 
@@ -81,8 +75,21 @@
 
                   $result = $stmt->fetchALL();
 
-                  echo "<tr><td>" . $result[0][1] . "</td><br>" .
+                  $consulta = '<table class="table table-bordered table-striped tabla table-responsive">
+                    <thead>
+                    <tr> 
+                    <th>Nombre</th>
+                    <th>CUIT</th>
+                    </tr>
+                    </thead>
+                    <tbody>';
+
+                  $consulta .= "<tr><td>" . $result[0][1] . "</td><br>" .
                   "<td>" .  $result[0][2] . "</td></tr>";
+
+                  echo $consulta . '</tbody>
+
+                  </table>';
                  
                }
 
@@ -94,8 +101,7 @@
               }
 
         ?>
-
-        </table>
+        
           
         
         </div>

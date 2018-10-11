@@ -40,6 +40,8 @@
 
 <!-- jQuery 3 -->
 <script src="vistas/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- jQuery UI -->
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="vistas/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- SlimScroll -->
@@ -50,6 +52,9 @@
 <script src="vistas/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="vistas/dist/js/demo.js"></script>
+
+<script src="vistas/dist/js/pages/dashboard.js"></script>
+
 <script>
   $(document).ready(function () {
     $('.sidebar-menu').tree()

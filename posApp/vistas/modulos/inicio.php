@@ -6,14 +6,10 @@
 
       var name = $(this).attr("name");
 
-      console.log(name);
-
       var data = {"name" : name};
 
-      console.log(data);
-
-      $.post("/delete.php", data, function(response){
-        alert(response);
+      $.post("vistas/modulos/delete.php", data, function(response){
+        console.log(response);
       });
 
       $(this).parent().parent().remove();
@@ -39,7 +35,7 @@
     </section>
 
     <!-- Main content -->
-    <section class="content">
+    <section class="content connectedSortable ui-sortable">
 
       <div class="box box-primary">
             <div class="box-header">
@@ -81,6 +77,7 @@
                  $result = $stmt->fetchALL();
 
                  for ($i=0; $i < count($result) ; $i++) { 
+
                      echo '<li>
                     <!-- drag handle -->
                     <span class="handle">
@@ -114,6 +111,7 @@
                           <i class="fa fa-ellipsis-v"></i>
                           <i class="fa fa-ellipsis-v"></i>
                     </span>
+                    <input type="checkbox" value="">
                     <span class="text" name="notaBorrar">' . $_POST["nota"] . '</span>
                     <!-- General tools such as edit or delete-->
                     <div class="tools">

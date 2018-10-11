@@ -47,18 +47,7 @@
 
         <div class="box-body">
 
-          <table class="table table-bordered table-striped tabla">
-
-            <tr>
-              <th>Nombre de fantasia</th>
-              <th>Raz&oacute;n social</th>
-              <th>CUIT/CUIL</th>
-              <th>N&uacute;mero de factura</th>
-              <th>Fecha de compra</th>
-              <th>Tipo de factura</th>
-              <th>Importe total</th>
-              <th>Pago</th>
-            </tr>
+          
             
 
           
@@ -204,7 +193,21 @@
 
                  
 
-                 $consulta = "";
+                 $consulta = '<table class="table table-bordered table-striped tabla">
+                  <thead>
+                  <tr>
+                    <th>Nombre de fantasia</th>
+                    <th>Raz&oacute;n social</th>
+                    <th>CUIT/CUIL</th>
+                    <th>N&uacute;mero de factura</th>
+                    <th>Fecha de compra</th>
+                    <th>Tipo de factura</th>
+                    <th>Importe total</th>
+                    <th>Pago</th>
+                  </tr>
+                </thead>
+                  <tbody>';
+
                  $sumaImportes = 0;
                  $sumaIngresosFinales = 0;
 
@@ -220,7 +223,7 @@
                  //  $consulta .= $sumaImportes . "<br>";
                  // }
 
-                 echo $consulta;
+                 echo $consulta . '</tbody></table>';
                  
                }
 
@@ -271,11 +274,7 @@
               }
 
         ?>
-
-        </table>
-
-          
-        
+ 
         </div>
         
       </div>
