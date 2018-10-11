@@ -76,7 +76,19 @@
 
                  $result = $stmt->fetchALL();
 
+
+
                  for ($i=0; $i < count($result) ; $i++) { 
+
+                  $labelShow = '';
+
+                 if ($result[$i][2] == "Urgente") {
+                  $labelShow .= '<small class="label label-danger"><i class="fa fa-clock-o"></i> Urgente</small>';
+                 } else if ($result[$i][2] == "Atenti") {
+                  $labelShow .= '<small class="label label-warning"><i class="fa fa-clock-o"></i> Atenti</small>';
+                 } else if ($result[$i][2] == "Tranqui") {
+                  $labelShow .= '<small class="label label-success"><i class="fa fa-clock-o"></i> Tranqui</small>';
+                 }
 
                      echo '<li>
                     <!-- drag handle -->
@@ -88,8 +100,9 @@
                     <input type="checkbox" value="">
                     <!-- todo text -->
                       
-                    <span class="text" name="notaBorrar">' . $result[$i][1] . '</span>
-                    <!-- General tools such as edit or delete-->
+                    <span class="text">' . $result[$i][1] . '</span>'
+                    . $labelShow .
+                    '<!-- General tools such as edit or delete-->
                     <div class="tools">
                         <button class="borrar" name="' . $result[$i][1] . '"><i class="fa fa-trash"></i></button>
                     </div>
@@ -100,10 +113,21 @@
 
                  if(isset($_POST["agregar"])){
 
-                    $queryAdd = "INSERT INTO todo (todo) VALUES (:nota)";
+                    $queryAdd = "INSERT INTO todo (todo, estado) VALUES (:nota, :estado)";
                     $stmt1 = $conn->prepare($queryAdd);
                     $stmt1->bindParam(":nota", $_POST["nota"]);
+                    $stmt1->bindParam(":estado", $_POST["estado"]);
                     $stmt1->execute();
+
+                    $label = "";
+
+                    if ($_POST["estado"] == "Urgente") {
+                      $label .= '<small class="label label-danger"><i class="fa fa-clock-o"></i> Urgente</small>';
+                    } else if ($_POST["estado"] == "Atenti") {
+                      $label .= '<small class="label label-warning"><i class="fa fa-clock-o"></i> Atenti</small>';
+                    } else if ($_POST["estado"] == "Tranqui") {
+                      $label = '<small class="label label-success"><i class="fa fa-clock-o"></i> Tranqui</small>';
+                    }
 
                     echo '<li>
                     <!-- drag handle -->
@@ -112,8 +136,9 @@
                           <i class="fa fa-ellipsis-v"></i>
                     </span>
                     <input type="checkbox" value="">
-                    <span class="text" name="notaBorrar">' . $_POST["nota"] . '</span>
-                    <!-- General tools such as edit or delete-->
+                    <span class="text">' . $_POST["nota"] . '</span>'
+                     . $label . 
+                    '<!-- General tools such as edit or delete-->
                     <div class="tools">
                       
                         <button class="borrar" name="' . $_POST["nota"] . '"><i class="fa fa-trash"></i></button>
@@ -169,9 +194,27 @@
 
               <input type="text" name="nota" class="form-control input-lg" placeholder="Ingresar nota" required>
 
+
             </div>
 
             
+
+          </div>
+
+          <br>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <select name="estado" id="form">
+                <option value="Urgente">Urgente</option>
+                <option value="Atenti">Atenti</option>
+                <option value="Tranqui">Tranqui</option>
+              </select>
+
+
+            </div>  
 
           </div>
 
