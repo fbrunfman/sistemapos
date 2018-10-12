@@ -1,3 +1,17 @@
+<script>
+
+  $(document).ready(function(){
+
+    $(".dt-buttons").children().addClass("btn btn-success");
+
+
+  });
+  
+  
+
+</script>
+
+
 <div class="content-wrapper">
     <section class="content-header">
       <h1>
@@ -191,7 +205,7 @@
 
                  
 
-                 $consulta = '<table class="table table-bordered table-striped tabla table-responsive">
+                 $consulta = '<table class="table table-bordered table-striped tabla table-responsive" id="idTabla">
                   <thead>
                   <tr>
                     <th>Nombre de cliente</th>
@@ -228,7 +242,11 @@
                  //  $consulta .= $sumaIngresosFinales . "<br>";
                  // }
 
-                 echo $consulta . '</tbody></table>';
+                 $consulta .= '</tbody></table>';
+
+                 $botonExcel = "<button class='btn btn-success' id='botonExcel'>Descargar en Excel</button>";
+
+                 echo $consulta;
                  
                }
 

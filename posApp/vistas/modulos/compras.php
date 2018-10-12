@@ -1,3 +1,16 @@
+<script>
+
+  $(document).ready(function(){
+
+    $(".dt-buttons").children().addClass("btn btn-success");
+
+
+  });
+  
+  
+
+</script>
+
 <div class="content-wrapper">
     <section class="content-header">
       <h1>

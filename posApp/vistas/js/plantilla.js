@@ -1,6 +1,12 @@
 $(".tabla").DataTable({
 
-	"language": {
+	dom: 'Bfrtip',
+
+	buttons: [
+		"excel"
+	],
+
+	language: {
 
 		"sProcessing":     "Procesando...",
 		"sLengthMenu":     "Mostrar _MENU_ registros",
