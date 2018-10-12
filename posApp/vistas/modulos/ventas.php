@@ -4,6 +4,9 @@
 
     $(".dt-buttons").children().addClass("btn btn-success");
 
+    $("#lista").children().removeClass();
+    $("#ventas").addClass("active");
+
 
   });
   

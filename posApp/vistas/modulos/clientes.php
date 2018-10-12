@@ -1,3 +1,17 @@
+<script>
+  
+  $(document).ready(function(){
+
+    $(".dt-buttons").children().hide();
+  
+    $("#lista").children().removeClass();
+    $("#clientes").addClass("active");
+
+
+  });
+
+</script>
+
 <div class="content-wrapper">
     <section class="content-header">
       <h1>
@@ -241,3 +255,5 @@
 
   </div>
 </div>
+
+

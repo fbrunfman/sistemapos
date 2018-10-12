@@ -3,9 +3,9 @@
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
+      <ul class="sidebar-menu" data-widget="tree" id="lista">
 
-        <li class="active">
+        <li class="active" id="inicio">
           
           <a href="inicio">
             
@@ -16,7 +16,7 @@
 
         </li>
 
-        <li>
+        <li id="clientes">
           
           <a href="clientes">
             
@@ -27,7 +27,7 @@
 
         </li>
 
-        <li>
+        <li id="ventas">
           
           <a href="ventas">
             
@@ -38,7 +38,7 @@
 
         </li>
 
-        <li>
+        <li id="compras">
           
           <a href="compras">
             
@@ -49,7 +49,7 @@
 
         </li>   
 
-        <li>
+        <li id="transf">
           
           <a href="transf">
             

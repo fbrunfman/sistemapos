@@ -1,3 +1,18 @@
+<script>
+  
+  $(document).ready(function(){
+
+    $(".dt-buttons").children().addClass("btn btn-success");
+
+    $("#lista").children().removeClass();
+    $("#transf").addClass("active");
+
+  });
+
+</script>
+
+
+
 <div class="content-wrapper">
     <section class="content-header">
       <h1>
