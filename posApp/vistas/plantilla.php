@@ -93,7 +93,8 @@
       if (isset($_GET["q"]) == "inicio" ||
           isset($_GET["q"]) == "clientes" ||
           isset($_GET["q"]) == "ventas" ||
-          isset($_GET["q"]) == "compras") {
+          isset($_GET["q"]) == "compras" ||
+          isset($_GET["q"]) == "transf") {
 
         include "modulos/" . $_GET["q"] . ".php";
 

@@ -47,7 +47,18 @@
             
           </a>
 
-        </li>        
+        </li>   
+
+        <li>
+          
+          <a href="transf">
+            
+            <i class="fa fa-exchange-alt"></i>
+            <span>Transferencias</span>
+            
+          </a>
+
+        </li>     
 
       </ul>
     </section>
