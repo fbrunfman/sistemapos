@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 
@@ -11,6 +12,8 @@ session_start();
 	    $conn = new PDO("mysql:host=$servername;dbname=sistemapos", $username, $password, $dsn_Options);
 	    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+
+
     if (isset($_POST["login"])) {
 
     	if (empty($_POST["usuario"]) || empty($_POST["password"])) {
@@ -19,18 +22,21 @@ session_start();
 
     	} else {
 
-    		$query = "SELECT * FROM usuario WHERE nombre = :usuario AND contrasena = :password";
+    		$password = $_POST["password"];
+    		$query = "SELECT * FROM usuario WHERE nombre = :usuario";
     		$stmt = $conn->prepare($query);
     		$stmt->execute(
     			Array(
-    				'usuario' => $_POST["usuario"],
-    				'password' => $_POST["password"]
+    				'usuario' => $_POST["usuario"]
     			)
     		);
 
     		$count = $stmt->rowCount();
 
-    		if($count > 0){
+    		$result = $stmt->fetchALL();
+
+
+    		if($count > 0 && password_verify($password, $result[0][3])){
     			$_SESSION["usuario"] = $_POST["usuario"];
     			header("location:inicio");
     		} else {
@@ -49,6 +55,8 @@ catch(PDOException $e)
     {
     echo $message = $e->getMessage();
     }
+
+
 
 ?>
 
