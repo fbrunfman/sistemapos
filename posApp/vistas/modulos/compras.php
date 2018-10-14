@@ -46,6 +46,20 @@
         </div>
       </div>
 
+      <div class="box">
+
+        <div class="box-header with-border">
+
+
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalEditarCompra">
+            
+            Editar compra
+
+          </button>
+
+        </div>
+      </div>
+
 
 
       <div class="box">
@@ -114,7 +128,29 @@
 
                   $stmt->execute(); 
 
-                  echo "¡Compra agregada exitosamente!";
+                  echo "<script>swal('¡Compra agregada exitosamente!')</script>";
+
+               }
+
+
+               if (isset($_POST["editar"])) {
+
+                  $razSoc = $_POST["razSoc"];
+                  $numFactura = $_POST["numFactura"];
+                  $nombreNew = $_POST["nombreNew"];
+                  $razSocNew = $_POST["razSocNew"];
+                  $cuitCuilNew = $_POST["cuitCuilNew"];
+                  $numFacturaNew = $_POST["numFacturaNew"];
+                  $fechaNew = $_POST["fechaNew"];
+                  $tipoFacturaNew = $_POST["tipoFacturaNew"];
+                  $importeTotalNew = $_POST["importeTotalNew"];
+
+
+                  $queryEditar = "UPDATE compra SET `nombre de fantasia` = '" . $nombreNew . "', `razon social` = '" . $razSocNew . "', `cuit cuil` = '" . $cuitCuilNew . "', `numero de factura` = '" . $numFacturaNew . "', fecha = '" . $fechaNew . "', `tipo de factura` = '" . $tipoFacturaNew . "', `importe total` = " . $importeTotalNew . " WHERE `razon social` = '" . $razSoc . "' AND `numero de factura` = '" . $numFactura . "'";
+                  $stmt = $conn->prepare($queryEditar);
+                  $stmt->execute();
+
+                  echo "<script>swal('¡Edición realizada exitosamente!')</script>";
 
                }
 
@@ -290,7 +326,7 @@
                   $stmt1->execute();
 
 
-                  echo "¡Pago agregado exitosamente!";
+                  echo "<script>swal('¡Pago agregado exitosamente!')</script>";
 
 
                   
@@ -465,7 +501,176 @@
   </div>
 </div>
 
+<div id="modalEditarCompra" class="modal fade" role="dialog">
 
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+
+      <form role="form" method="post">
+
+      <div class="modal-header" style="background: #3c8dbc; color: white;">
+
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        <h4 class="modal-title">Editar compra</h4>
+
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="box-body">
+
+          
+          Ingres&aacute; los datos de la compra que quieras editar <br><br>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social">
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="numFactura" class="form-control" placeholder="Ingresar n&uacute;mero de factura">
+
+            </div>
+
+          </div>
+
+
+          <br><br>
+
+
+          Ingres&aacute; todos los datos corregidos de la compra <br><br>
+
+
+          
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="nombreNew" class="form-control" placeholder="Ingresar nombre de fantas&iacute;a del proveedor">
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="razSocNew" class="form-control" placeholder="Ingresar raz&oacute;n social" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
+
+              <input type="text" name="cuitCuilNew" class="form-control" placeholder="Ingresar CUIT/CUIL" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
+
+              <input type="text" name="numFacturaNew" class="form-control" placeholder="Ingresar n&uacute;mero de factura" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
+
+              <input type="text" name="tipoFacturaNew" class="form-control" placeholder="Ingresar tipo de factura" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+              <input type="date" name="fechaNew" class="form-control" placeholder="Ingresar fecha de compra" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
+
+              <input type="number" name="importeTotalNew" class="form-control" placeholder="Ingresar importe total" required>
+
+            </div>
+
+          </div>
+
+
+
+
+
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+
+        <button type="submit" name="editar" class="btn btn-primary">Guardar compra</button>
+
+      </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
 
 
 <div id="modalConsultaCompra" class="modal fade" role="dialog">

@@ -46,6 +46,21 @@
         </div>
 
         <!-- Default box -->
+
+
+        <div class="box">
+
+        <div class="box-header with-border">
+
+
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalEditarVenta">
+            
+            Editar venta
+
+          </button>
+
+          </div>
+        </div>
       
 
           <!-- Default box -->
@@ -117,7 +132,7 @@
 
                   $stmt->execute(); 
 
-                  echo "¡Venta agregada exitosamente!";
+                  echo "<script>swal('¡Venta realizada exitosamente!')</script>";
 
                }
 
@@ -221,6 +236,7 @@
                     <th>Impuesto a las ganancias</th>
                     <th>Ingresos brutos</th>
                     <th>Ingreso final</th>
+                    <th>Fecha de pago</th>
                   </tr>
                   </thead>
                   <tbody>';
@@ -230,7 +246,13 @@
 
                  for ($i=0; $i < count($resultVenta); $i++) { 
                    if (!is_null($resultVenta[$i])) {
-                    $consulta .= "<tr><td>" . $resultVenta[$i]["cliente_id"] . "</td><td>" . $resultVenta[$i]["concepto"] . "</td><td>" . $resultVenta[$i]["importe"] . "</td><td>" . $resultVenta[$i]["numero de factura"] . "</td><td>" .  $resultVenta[$i]["fecha de venta"] . "</td><td>" . $resultVenta[$i]["iva"] . "</td><td>" . $resultVenta[$i]["suss"] . "</td><td>" . $resultVenta[$i]["ganancias"] . "</td><td>" . $resultVenta[$i]["iibb"] . "</td><td>" . $resultVenta[$i]["ingreso final"] . "</td></tr>";
+                    $queryNombre = "SELECT nombre FROM cliente WHERE id =" . $resultVenta[$i]["cliente_id"];
+                    $stmt = $conn->prepare($queryNombre);
+                    $stmt->execute();
+                    $resultNombre = $stmt->fetchALL();
+                    $nombreCliente = $resultNombre[0][0];
+
+                    $consulta .= "<tr><td>" . $nombreCliente . "</td><td>" . $resultVenta[$i]["concepto"] . "</td><td>" . $resultVenta[$i]["importe"] . "</td><td>" . $resultVenta[$i]["numero de factura"] . "</td><td>" .  $resultVenta[$i]["fecha de venta"] . "</td><td>" . $resultVenta[$i]["iva"] . "</td><td>" . $resultVenta[$i]["suss"] . "</td><td>" . $resultVenta[$i]["ganancias"] . "</td><td>" . $resultVenta[$i]["iibb"] . "</td><td>" . $resultVenta[$i]["ingreso final"] . "</td><td>" . $resultVenta[$i]["fecha de pago"] . "</td></tr>";
                     $sumaImportes += $resultVenta[$i]["importe"];
                     $sumaIngresosFinales += $resultVenta[$i]["ingreso final"];
                    }      
@@ -253,6 +275,72 @@
                  
                }
 
+               if (isset($_POST["editar"])) {
+
+                  $nombre = $_POST["nombre"];
+                  $numFactura = $_POST["numFactura"];
+                  $nombreNew = $_POST["nombreNew"];
+                  $conceptoNew = $_POST["conceptoNew"];
+                  $numFacturaNew = $_POST["numFacturaNew"];
+                  $importeNew = $_POST["importeNew"];
+                  $fechaNew = $_POST["fechaNew"];
+                  $ivaNew = $_POST["ivaNew"];
+                  $sussNew = $_POST["sussNew"];
+                  $gananciasNew = $_POST["gananciasNew"];
+                  $iibbNew = $_POST["iibbNew"];
+                  $ingresoFinalNew = $_POST["ingresoFinalNew"];
+                  $fechaPagoNew = $_POST["fechaNew"];
+
+
+                  $queryId = "SELECT id FROM cliente WHERE nombre = '" . $nombre . "'";
+                  $stmt = $conn->prepare($queryId);
+                  $stmt->execute();
+                  $result = $stmt->fetchAll();
+
+                  $cliente_id = $result[0][0];
+
+
+                  $queryIdNuevo = "SELECT id FROM cliente WHERE nombre = '" . $nombreNew . "'";
+                  $stmt1 = $conn->prepare($queryIdNuevo);
+                  $stmt1->execute();
+                  $result1 = $stmt1->fetchAll();
+
+                  $cliente_idNew = $result1[0][0];
+
+                  if ($ivaNew == "") {
+                    $ivaNew = 0;
+                  }
+
+                  if ($sussNew == "") {
+                    $sussNew = 0;
+                  }
+
+                  if ($gananciasNew == "") {
+                    $gananciasNew = 0;
+                  }
+
+                  if ($iibbNew == "") {
+                    $iibbNew = 0;
+                  }
+
+                  if ($ingresoFinalNew == "") {
+                    $ingresoFinalNew = 0;
+                  }
+
+                  if ($fechaPagoNew == "") {
+                    $fechaPagoNew = NULL;
+                  }
+
+
+
+                  $queryEditar = "UPDATE venta SET cliente_id = ". $cliente_idNew .", concepto = '" . $conceptoNew . "', `numero de factura` ='" . $numFacturaNew . "', importe = " . $importeNew . ", `fecha de venta` = '" . $fechaNew . "', iva = " . $ivaNew . ", suss = " . $sussNew . ", ganancias = " . $gananciasNew . ", iibb = " . $iibbNew . ", `ingreso final` = " . $ingresoFinalNew . ", `fecha de pago` = '" . $fechaPagoNew . "' WHERE cliente_id = " . $cliente_id . " AND `numero de factura` = '" . $numFactura . "'";
+                  $stmt = $conn->prepare($queryEditar);
+                  $stmt->execute();
+
+                  echo "<script>swal('¡Edición realizada exitosamente!')</script>";
+
+               }
+
 
                if (isset($_POST["agregarPago"])) {
 
@@ -269,7 +357,7 @@
                   $stmt = $conn->prepare($query);
                   $stmt->execute(); 
 
-                  echo "¡Pago agregado exitosamente!";
+                  echo "<script>swal('¡Pago agregado exitosamente!')</script>";
                  
                }
 
@@ -402,6 +490,230 @@
 </div>
 
 
+<div id="modalEditarVenta" class="modal fade" role="dialog">
+
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+
+      <form role="form" method="post">
+
+      <div class="modal-header" style="background: #3c8dbc; color: white;">
+
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        <h4 class="modal-title">Editar venta</h4>
+
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="box-body">
+
+          
+          Ingres&aacute; los datos de la venta que quieras editar <br><br>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre de cliente">
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="numFactura" class="form-control" placeholder="Ingresar n&uacute;mero de factura">
+
+            </div>
+
+          </div>
+
+
+          <br><br>
+
+
+          Ingres&aacute; todos los datos corregidos de la venta <br><br>
+
+
+          
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="nombreNew" class="form-control" placeholder="Ingresar nombre del cliente">
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="conceptoNew" class="form-control" placeholder="Ingresar concepto" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
+
+              <input type="text" name="importeNew" class="form-control" placeholder="Ingresar importe" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
+
+              <input type="text" name="numFacturaNew" class="form-control" placeholder="Ingresar n&uacute;mero de factura" required>
+
+            </div>
+
+          </div>
+
+
+          Fecha de venta
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+              <input type="date" name="fechaNew" class="form-control" placeholder="Ingresar fecha de venta" required>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
+
+              <input type="number" name="ivaNew" class="form-control" placeholder="Ingresar IVA (dejar en blanco si no fue registrada todav&iacute;a)">
+
+            </div>
+
+          </div>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
+
+              <input type="number" name="sussNew" class="form-control" placeholder="Ingresar seguridad social (dejar en blanco si no fue registrada todav&iacute;a)">
+
+            </div>
+
+          </div>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
+
+              <input type="number" name="gananciasNew" class="form-control" placeholder="Ingresar impuesto a las ganancias (dejar en blanco si no fue registrada todav&iacute;a)">
+
+            </div>
+
+          </div>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
+
+              <input type="number" name="iibbNew" class="form-control" placeholder="Ingresar ingresos brutos (dejar en blanco si no fue registrada todav&iacute;a)">
+
+            </div>
+
+          </div>
+
+
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
+
+              <input type="number" name="ingresoFinalNew" class="form-control" placeholder="Ingresar ingreso final (dejar en blanco si no fue registrada todav&iacute;a)">
+
+            </div>
+
+          </div>
+
+          Fecha de pago
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+              <input type="date" name="fechaPagoNew" class="form-control" placeholder="Ingresar fecha de pago (dejar en blanco si no fue pagada todav&iacute;a)">
+
+            </div>
+
+          </div>
+
+
+
+
+
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+
+        <button type="submit" name="editar" class="btn btn-primary">Guardar venta</button>
+
+      </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
 
 
 <div id="modalConsultaVenta" class="modal fade" role="dialog">

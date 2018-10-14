@@ -79,7 +79,7 @@
                   $stmt->bindParam(":cuit", $_POST["cuit"]);
                   $stmt->execute(); 
 
-                  echo "¡Cliente agregado exitosamente!<br>";
+                  echo "<script>swal('¡Cliente agregado exitosamente!')</script>";
                   
 
                }
@@ -87,7 +87,13 @@
 
                if (isset($_POST["consultar"])) {
 
-                  $query = "SELECT * FROM cliente WHERE nombre='" . $_POST["nombreConsulta"] . "'";
+
+
+                  $query = "SELECT * FROM cliente";
+
+                  if ($_POST["nombreConsulta"] !== "") {
+                    $query .=  " WHERE nombre='" . $_POST["nombreConsulta"] . "'";
+                  }
 
                   $stmt = $conn->prepare($query);
                   $stmt->execute(); 
@@ -103,12 +109,11 @@
                     </thead>
                     <tbody>';
 
-                  $consulta .= "<tr><td>" . $result[0][1] . "</td><br>" .
-                  "<td>" .  $result[0][2] . "</td></tr>";
+                  for ($i=0; $i < count($result) ; $i++) { 
+                    $consulta .= "<tr><td>" . $result[$i][1] . "</td><td>" . $result[$i][2] . "</td></tr>";
+                  }
 
-                  echo $consulta . '</tbody>
-
-                  </table>';
+                  echo $consulta . '</tbody></table>';
                  
                }
 
@@ -230,7 +235,7 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreConsulta" class="form-control input-lg" placeholder="Ingresar nombre" required>
+              <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre (dejar en blanco si deseas ver a todos los clientes)">
 
             </div>
 
