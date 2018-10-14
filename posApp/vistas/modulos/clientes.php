@@ -73,10 +73,11 @@
 
               if (isset($_POST["agregar"])) {
 
-                  $query = "INSERT INTO cliente (nombre, cuit) VALUES (:nombre, :cuit)";
+                  $query = "INSERT INTO cliente (nombre, cuit, email) VALUES (:nombre, :cuit, :email)";
                   $stmt = $conn->prepare($query);
                   $stmt->bindParam(":nombre", $_POST["nombre"]);
                   $stmt->bindParam(":cuit", $_POST["cuit"]);
+                  $stmt->bindParam(":email", $_POST["email"]);
                   $stmt->execute(); 
 
                   echo "<script>swal('¡Cliente agregado exitosamente!')</script>";
@@ -105,12 +106,13 @@
                     <tr> 
                     <th>Nombre</th>
                     <th>CUIT</th>
+                    <th>E-mail</th>
                     </tr>
                     </thead>
                     <tbody>';
 
                   for ($i=0; $i < count($result) ; $i++) { 
-                    $consulta .= "<tr><td>" . $result[$i][1] . "</td><td>" . $result[$i][2] . "</td></tr>";
+                    $consulta .= "<tr><td>" . $result[$i][1] . "</td><td>" . $result[$i][2] . "</td><td>" . $result[$i][3] .  "</td></tr>";
                   }
 
                   echo $consulta . '</tbody></table>';
@@ -165,7 +167,7 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombre" class="form-control input-lg" placeholder="Ingresar nombre" required>
+              <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre" required>
 
             </div>
 
@@ -179,7 +181,22 @@
 
               <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
 
-              <input type="text" name="cuit" class="form-control input-lg" placeholder="Ingresar CUIT" required>
+              <input type="text" name="cuit" class="form-control" placeholder="Ingresar CUIT" required>
+
+            </div>
+
+            
+
+          </div>
+
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="email" class="form-control" placeholder="Ingresar e-mail">
 
             </div>
 

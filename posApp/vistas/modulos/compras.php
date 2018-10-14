@@ -8,6 +8,21 @@
     $("#compras").addClass("active");
 
 
+    $('#mostrarPagos').click(function(){
+
+      var data = {
+        "razSoc" : $('#razSoc').value,
+        "numFactura" : $('#numFactura').value
+      }
+      swal(data);
+
+      // $.post('vistas/modulos/devolverPagos.php', data, function(response){
+      //   swal(response);
+      // })
+
+
+    });
+
   });
   
   
@@ -75,10 +90,8 @@
 
         </div>
 
-
-        
-        
       </div>
+
 
       <div class="box">
 
@@ -113,7 +126,7 @@
 
               if (isset($_POST["agregar"])) {
 
-                  $query = "INSERT INTO compra (`nombre de fantasia`, `razon social`, `cuit cuil`, `numero de factura`, fecha, `tipo de factura`, `importe total`, `pago total`) VALUES (:nombre, :razSoc, :cuitCuil, :numFactura, :fecha, :tipoFactura, :importeTotal, :pagoTotal)";
+                  $query = "INSERT INTO compra (`nombre de fantasia`, `razon social`, `cuit cuil`, `numero de factura`, fecha, `tipo de factura`, `importe total`) VALUES (:nombre, :razSoc, :cuitCuil, :numFactura, :fecha, :tipoFactura, :importeTotal)";
                   $stmt = $conn->prepare($query);
                   
                   $stmt->bindParam(":nombre", $_POST["nombre"]);
@@ -123,7 +136,6 @@
                   $stmt->bindParam(":fecha", $_POST["fecha"]);
                   $stmt->bindParam(":tipoFactura", $_POST["tipoFactura"]);
                   $stmt->bindParam(":importeTotal", $_POST["importeTotal"]);
-                  $stmt->bindParam(":pagoTotal", $_POST["pagoTotal"]);
                   
 
                   $stmt->execute(); 
@@ -474,18 +486,6 @@
 
           </div>
 
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
-
-              <input type="number" name="pagoTotal" class="form-control" placeholder="Ingresar pago (dejalo en 0 si todav&iacute;a no fue efectuado)" required>
-
-            </div>
-
-          </div>
-
 
 
 
@@ -821,6 +821,7 @@
 
   </div>
 </div>
+
 
 
 <div id="modalAgregarPago" class="modal fade" role="dialog">

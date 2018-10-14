@@ -261,24 +261,12 @@
                     $resultNombre = $stmt->fetchALL();
                     $nombreCliente = $resultNombre[0][0];
 
-                    $consulta .= "<tr><td>" . $nombreCliente . "</td><td>" . $resultVenta[$i]["concepto"] . "</td><td>" . $resultVenta[$i]["importe"] . "</td><td>" . $resultVenta[$i]["numero de factura"] . "</td><td>" .  $resultVenta[$i]["fecha de venta"] . "</td><td>" . $resultVenta[$i]["iva"] . "</td><td>" . $resultVenta[$i]["suss"] . "</td><td>" . $resultVenta[$i]["ganancias"] . "</td><td>" . $resultVenta[$i]["iibb"] . "</td><td>" . $resultVenta[$i]["ingreso final"] . "</td><td>" . $resultVenta[$i]["fecha de pago"] . "</td></tr>";
-                    $sumaImportes += $resultVenta[$i]["importe"];
-                    $sumaIngresosFinales += $resultVenta[$i]["ingreso final"];
+                    $consulta .= "<tr><td>" . $nombreCliente . "</td><td>" . $resultVenta[$i]["concepto"] . "</td><td>" . $resultVenta[$i]["importe"] . "</td><td>" . $resultVenta[$i]["numero de factura"] . "</td><td>" .  formatearFecha($resultVenta[$i]["fecha de venta"]) . "</td><td>" . $resultVenta[$i]["iva"] . "</td><td>" . $resultVenta[$i]["suss"] . "</td><td>" . $resultVenta[$i]["ganancias"] . "</td><td>" . $resultVenta[$i]["iibb"] . "</td><td>" . $resultVenta[$i]["ingreso final"] . "</td><td>" . formatearFecha($resultVenta[$i]["fecha de pago"]) . "</td></tr>";
                    }      
                    
                  }
 
-                 // if ($importes) {
-                 //  $consulta .= $sumaImportes . "<br>";
-                 // }
-
-                 // if ($ingresosFinales) {
-                 //  $consulta .= $sumaIngresosFinales . "<br>";
-                 // }
-
                  $consulta .= '</tbody></table>';
-
-                 $botonExcel = "<button class='btn btn-success' id='botonExcel'>Descargar en Excel</button>";
 
                  echo $consulta;
                  
@@ -298,7 +286,7 @@
                   $gananciasNew = $_POST["gananciasNew"];
                   $iibbNew = $_POST["iibbNew"];
                   $ingresoFinalNew = $_POST["ingresoFinalNew"];
-                  $fechaPagoNew = $_POST["fechaNew"];
+                  $fechaPagoNew = $_POST["fechaPagoNew"];
 
 
                   $queryId = "SELECT id FROM cliente WHERE nombre = '" . $nombre . "'";
@@ -336,13 +324,14 @@
                     $ingresoFinalNew = 0;
                   }
 
-                  if ($fechaPagoNew == "") {
-                    $fechaPagoNew = NULL;
+                  if (!$fechaPagoNew) {
+                    $queryEditar = "UPDATE venta SET cliente_id = ". $cliente_idNew .", concepto = '" . $conceptoNew . "', `numero de factura` ='" . $numFacturaNew . "', importe = " . $importeNew . ", `fecha de venta` = '" . $fechaNew . "', iva = " . $ivaNew . ", suss = " . $sussNew . ", ganancias = " . $gananciasNew . ", iibb = " . $iibbNew . ", `ingreso final` = " . $ingresoFinalNew . ", `fecha de pago` = NULL WHERE cliente_id = " . $cliente_id . " AND `numero de factura` = '" . $numFactura . "'";
+                  } else {
+                    $fechaPagoNew = "'" .  $fechaPagoNew . "'";
+
+                    $queryEditar = "UPDATE venta SET cliente_id = ". $cliente_idNew .", concepto = '" . $conceptoNew . "', `numero de factura` ='" . $numFacturaNew . "', importe = " . $importeNew . ", `fecha de venta` = '" . $fechaNew . "', iva = " . $ivaNew . ", suss = " . $sussNew . ", ganancias = " . $gananciasNew . ", iibb = " . $iibbNew . ", `ingreso final` = " . $ingresoFinalNew . ", `fecha de pago` = " . $fechaPagoNew . " WHERE cliente_id = " . $cliente_id . " AND `numero de factura` = '" . $numFactura . "'";
                   }
 
-
-
-                  $queryEditar = "UPDATE venta SET cliente_id = ". $cliente_idNew .", concepto = '" . $conceptoNew . "', `numero de factura` ='" . $numFacturaNew . "', importe = " . $importeNew . ", `fecha de venta` = '" . $fechaNew . "', iva = " . $ivaNew . ", suss = " . $sussNew . ", ganancias = " . $gananciasNew . ", iibb = " . $iibbNew . ", `ingreso final` = " . $ingresoFinalNew . ", `fecha de pago` = '" . $fechaPagoNew . "' WHERE cliente_id = " . $cliente_id . " AND `numero de factura` = '" . $numFactura . "'";
                   $stmt = $conn->prepare($queryEditar);
                   $stmt->execute();
 
@@ -810,34 +799,6 @@
               <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
 
               <input type="date" name="hasta" class="form-control" placeholder="Hasta">
-
-            </div>
-
-          </div>
-
-          <div class="form-group">
-
-            <div class="input-group">
-
-              
-
-              Incluir suma de importes
-
-              <input type="checkbox" name="importes">
-
-            </div>
-
-          </div>
-
-          <div class="form-group">
-
-            <div class="input-group">
-
-              
-
-              Incluir suma de ingresos finales
-
-              <input type="checkbox" name="ingresosFinales">
 
             </div>
 
