@@ -100,6 +100,15 @@
 
           <?php 
 
+            function formatearFecha($fecha) {
+                   $year =  substr($fecha, 0, 4);
+                   $mes = substr($fecha, 5, 2);
+                   $dia = substr($fecha, 8, 2);
+
+                   return $dia . "-" . $mes . "-" . $year;
+                   
+                  }
+
             $servername = "localhost";
             $username = "root";
             $password = "root";

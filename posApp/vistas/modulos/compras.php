@@ -258,6 +258,15 @@
 
                   }
 
+                function formatearFecha($fecha) {
+                   $year =  substr($fecha, 0, 4);
+                   $mes = substr($fecha, 5, 2);
+                   $dia = substr($fecha, 8, 2);
+
+                   return $dia . "-" . $mes . "-" . $year;
+                   
+                  }
+
                  
 
                  $consulta = '<table class="table table-bordered table-striped tabla">
@@ -280,7 +289,7 @@
 
                  for ($i=0; $i < count($resultCompra); $i++) { 
                    if (!is_null($resultCompra[$i])) {
-                    $consulta .=  "<tr><td>" . $resultCompra[$i]["nombre de fantasia"] . "</td><td>" . $resultCompra[$i]["razon social"] . "</td><td>" . $resultCompra[$i]["cuit cuil"] . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . $resultCompra[$i]["fecha"] . "</td><td>" . $resultCompra[$i]["tipo de factura"] . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
+                    $consulta .=  "<tr><td>" . $resultCompra[$i]["nombre de fantasia"] . "</td><td>" . $resultCompra[$i]["razon social"] . "</td><td>" . $resultCompra[$i]["cuit cuil"] . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . formatearFecha($resultCompra[$i]["fecha"]) . "</td><td>" . $resultCompra[$i]["tipo de factura"] . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
                     $sumaImportes += $resultCompra[$i]["importe total"];
                    }      
                    
