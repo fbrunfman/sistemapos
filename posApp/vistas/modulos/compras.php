@@ -446,6 +446,8 @@
 
           </div>
 
+          Fecha de compra
+
 
           <div class="form-group">
 
@@ -633,13 +635,16 @@
           </div>
 
 
+          Fecha de compra
+
+
           <div class="form-group">
 
             <div class="input-group">
 
               <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
 
-              <input type="date" name="fechaNew" class="form-control" placeholder="Ingresar fecha de compra" required>
+              <input type="date" name="fechaNew" class="form-control" required>
 
             </div>
 
@@ -695,7 +700,7 @@
 
         <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-        <h4 class="modal-title">Consultar datos de la venta</h4>
+        <h4 class="modal-title">Consultar datos de la compra</h4>
 
       </div>
 
@@ -894,6 +899,8 @@
 
             
           </div>
+
+          Fecha de pago
 
           <div class="form-group">
 

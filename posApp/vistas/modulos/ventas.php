@@ -467,6 +467,9 @@
             
           </div>
 
+
+          Fecha de venta
+
           <div class="form-group">
 
             <div class="input-group">
@@ -687,7 +690,7 @@
 
           </div>
 
-          Fecha de pago
+          Fecha de pago (dejar en blanco si no fue pagada todav&iacute;a)
 
           <div class="form-group">
 
@@ -976,6 +979,9 @@
 
             
           </div>
+
+
+          Fecha de pago
 
           <div class="form-group">
 
