@@ -8,20 +8,7 @@
     $("#compras").addClass("active");
 
 
-    $('#mostrarPagos').click(function(){
-
-      var data = {
-        "razSoc" : $('#razSoc').value,
-        "numFactura" : $('#numFactura').value
-      }
-      swal(data);
-
-      // $.post('vistas/modulos/devolverPagos.php', data, function(response){
-      //   swal(response);
-      // })
-
-
-    });
+    
 
   });
   
@@ -284,6 +271,7 @@
                  $consulta = '<table class="table table-bordered table-striped tabla">
                   <thead>
                   <tr>
+                    <th>Id</th>
                     <th>Nombre de fantasia</th>
                     <th>Raz&oacute;n social</th>
                     <th>CUIT/CUIL</th>
@@ -301,7 +289,7 @@
 
                  for ($i=0; $i < count($resultCompra); $i++) { 
                    if (!is_null($resultCompra[$i])) {
-                    $consulta .=  "<tr><td>" . $resultCompra[$i]["nombre de fantasia"] . "</td><td>" . $resultCompra[$i]["razon social"] . "</td><td>" . $resultCompra[$i]["cuit cuil"] . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . formatearFecha($resultCompra[$i]["fecha"]) . "</td><td>" . $resultCompra[$i]["tipo de factura"] . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
+                    $consulta .=  "<tr><td>" . $resultCompra[$i]["id"] . "</td><td>" . $resultCompra[$i]["nombre de fantasia"] . "</td><td>" . $resultCompra[$i]["razon social"] . "</td><td>" . $resultCompra[$i]["cuit cuil"] . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . formatearFecha($resultCompra[$i]["fecha"]) . "</td><td>" . $resultCompra[$i]["tipo de factura"] . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
                     $sumaImportes += $resultCompra[$i]["importe total"];
                    }      
                    
@@ -367,6 +355,81 @@
 
         </div>
       </div>
+
+
+      <div class="box">
+
+        <div class="box-header with-border">
+
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalVerPagos">
+            
+            Ver pagos
+
+          </button>
+
+          <div class="box-body">
+            
+
+            <?php 
+
+
+              if (isset($_POST["verPagos"])) {
+
+                require_once('conexion.php');
+  
+                conectar();
+  
+                global $conn;
+  
+  
+                $query = "SELECT * FROM pago WHERE compra_id = " . $_POST["id"];
+                $stmt = $conn->prepare($query);
+                $stmt->execute();
+                $result = $stmt->fetchALL();
+  
+  
+                $consulta = '<table class="table table-bordered table-striped tabla">
+                              <thead>
+                                <th>Fecha de pago</th>
+                                <th>Medio de pago</th>
+                                <th>Pago</th>
+                              </thead>
+                              <tbody>';
+  
+                for ($i=0; $i < count($result); $i++) { 
+                  $consulta .= '<tr><td>' . $result[$i][3] . '</td><td>' . $result[$i][2] . '</td><td>' . $result[$i][4] . '</td></tr>';
+                }
+  
+                $consulta .= '</tbody></table>';
+  
+  
+  
+                echo $consulta;
+
+
+              }
+
+
+
+            ?>
+
+
+
+
+
+
+
+
+          </div>
+
+
+
+
+        </div>
+
+      </div>
+
+
 
     </section>
 
@@ -790,19 +853,7 @@
 
           </div>
 
-          <div class="form-group">
-
-            <div class="input-group">
-
-              
-
-              Incluir suma de importes totales&nbsp; 
-
-              <input type="checkbox" name="importes">
-
-            </div>
-
-          </div>
+          
 
         </div>
 
@@ -812,6 +863,63 @@
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
 
         <button type="submit" name="consultar" class="btn btn-primary">Consultar datos</button>
+
+      </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+<div id="modalVerPagos" class="modal fade" role="dialog">
+
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+
+      <form role="form" method="post" id="consultar">
+
+      <div class="modal-header" style="background: #3c8dbc; color: white;">
+
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        <h4 class="modal-title">Consultar datos de la compra</h4>
+
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="box-body">
+
+
+          
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="number" name="id" class="form-control" placeholder="Ingresar id de compra" required>
+
+            </div>
+
+          </div>
+
+          
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+
+        <button type="submit" name="verPagos" class="btn btn-primary">Ver pagos</button>
 
       </div>
 

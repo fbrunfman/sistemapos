@@ -97,7 +97,7 @@
                   
                   if (isset($_POST["agregar"])) {
 
-                    $query = "INSERT INTO transferencia (nombre, `cuit cuil`, cbu, concepto, `numero de factura` ,`tipo de factura`, fecha, `importe total`, realizado) VALUES (:nombre, :cuitCuil, :cbu, :concepto, :numFactura, :tipoFactura, :fecha, :importeTotal, :realizado)";
+                    $query = "INSERT INTO transferencia (nombre, `cuit cuil`, cbu, concepto, `numero de factura` ,`tipo de factura`, `importe total`, realizado) VALUES (:nombre, :cuitCuil, :cbu, :concepto, :numFactura, :tipoFactura, :importeTotal, :realizado)";
                     $stmt = $conn->prepare($query);
                     
                     $stmt->bindParam(":nombre", $_POST["nombre"]);
@@ -106,9 +106,15 @@
                     $stmt->bindParam(":concepto", $_POST["concepto"]);
                     $stmt->bindParam(":numFactura", $_POST["numFactura"]);
                     $stmt->bindParam(":tipoFactura", $_POST["tipoFactura"]);
-                    $stmt->bindParam(":fecha", $_POST["fecha"]);
                     $stmt->bindParam(":importeTotal", $_POST["importeTotal"]);
                     $stmt->bindParam(":realizado", $_POST["realizado"]);
+
+                    if($_POST["fecha"]){
+                      $queryFecha = "INSERT INTO transferencia (fecha) VALUES (:fecha)";
+                      $stmt1->prepare($queryFecha);
+                      $stmt1->bindParam(":fecha", $_POST["fecha"]);
+                      $stmt1->execute();
+                    }
                     
 
                     $stmt->execute(); 
@@ -298,7 +304,7 @@
 
           <div class="input-group">
 
-            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+            <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
             <input type="text" name="cuitCuil" class="form-control" placeholder="Ingresar n&uacute;mero de Cuit">
 
@@ -311,7 +317,7 @@
 
           <div class="input-group">
 
-            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+            <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
             <input type="text" name="cbu" class="form-control" placeholder="Ingresar  n&uacute;mero de CBU">
 
@@ -324,22 +330,9 @@
 
           <div class="input-group">
 
-            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+            <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
 
-            <input type="text" name="concepto" class="form-control" placeholder="Ingresar concepto" >
-
-          </div>
-
-        </div>
-        
-        
-        <div class="form-group">
-
-          <div class="input-group">
-
-            <span class="input-group-addon"><i class="fa fa-user"></i></span>
-
-            <input type="text" name="numFactura" class="form-control" placeholder="Ingresar  n&uacute;mero de factura" required>
+            <input type="text" name="concepto" class="form-control" placeholder="Ingresar concepto" required>
 
           </div>
 
@@ -350,33 +343,35 @@
 
           <div class="input-group">
 
-            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+            <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
+
+            <input type="text" name="numFactura" class="form-control" placeholder="Ingresar n&uacute;mero de factura" required>
+
+          </div>
+
+        </div>
+        
+        
+        <div class="form-group">
+
+          <div class="input-group">
+
+            <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
 
             <input type="text" name="tipoFactura" class="form-control" placeholder="Ingresar tipo de factura" required>
 
           </div>
 
         </div>
-        
-        
-        <div class="form-group">
 
-          <div class="input-group">
 
-            <span class="input-group-addon"><i class="fa fa-user"></i></span>
-
-            <input type="date" name="fecha" class="form-control" placeholder="Ingresar feha de pago">
-
-          </div>
-
-        </div>
        
        
         <div class="form-group">
 
           <div class="input-group">
 
-            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+            <span class="input-group-addon"><i class="fa fa-dollar-sign"></i></span>
 
             <input type="text" name="importeTotal" class="form-control" placeholder="Ingresar importe a pagar" required>
 
@@ -401,6 +396,24 @@
             </div>
 
           </div>
+
+
+
+        
+        Fecha de realizaci&oacute;n
+        <div class="form-group">
+
+          <div class="input-group">
+
+            <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+            <input type="date" name="fecha" class="form-control"">
+
+          </div>
+
+        </div>
+
+
 
       </div>
 
