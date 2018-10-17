@@ -38,6 +38,17 @@
 
         </li>
 
+        <li id="proveedores">
+          
+          <a href="proveedor">
+            
+            <i class="fa fa-dolly-flatbed"></i>
+            <span>Proveedores</span>
+            
+          </a>
+
+        </li> 
+
         <li id="compras">
           
           <a href="compras">

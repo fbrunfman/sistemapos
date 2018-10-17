@@ -94,6 +94,7 @@
           isset($_GET["q"]) == "clientes" ||
           isset($_GET["q"]) == "ventas" ||
           isset($_GET["q"]) == "compras" ||
+          isset($_GEST["q"]) == "proveedor" ||
           isset($_GET["q"]) == "transf") {
 
         include "modulos/" . $_GET["q"] . ".php";

@@ -6,8 +6,6 @@
 
     $("#lista").children().removeClass();
     $("#compras").addClass("active");
-
-
     
 
   });

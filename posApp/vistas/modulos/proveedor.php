@@ -5,7 +5,7 @@
     $(".dt-buttons").children().hide();
   
     $("#lista").children().removeClass();
-    $("#clientes").addClass("active");
+    $("#proveedores").addClass("active");
 
 
   });
@@ -15,12 +15,12 @@
 <div class="content-wrapper">
     <section class="content-header">
       <h1>
-        Administrar clientes
+        Administrar proveedores
   
       </h1>
       <ol class="breadcrumb">
         <li><a href="inicio"><i class="fa fa-tachometer-alt"></i> Inicio</a></li>
-        <li class="active">Administrar clientes</li>
+        <li class="active">Administrar proveedores</li>
       </ol>
     </section>
 
@@ -33,9 +33,9 @@
         <div class="box-header with-border">
 
 
-          <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarCliente">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarProveedor">
             
-            Agregar cliente
+            Agregar proveedor
 
           </button>
 
@@ -46,9 +46,9 @@
 
         <div class="box-header with-border">
 
-          <button class="btn btn-primary" data-toggle="modal" data-target="#modalConsultaCliente">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#modalConsultaProveedor">
             
-            Consultar datos de cliente
+            Consultar datos de proveedor
 
           </button>
 
@@ -73,14 +73,15 @@
 
               if (isset($_POST["agregar"])) {
 
-                  $query = "INSERT INTO cliente (nombre, cuit, email) VALUES (:nombre, :cuit, :email)";
+                  $query = "INSERT INTO proveedor (`nombre de fantasia`, `razon social`, `cuit cuil`, `tipo de factura`) VALUES (:nombreFantasia, :razonSocial, :cuitCuil, :tipoFactura)";
                   $stmt = $conn->prepare($query);
-                  $stmt->bindParam(":nombre", $_POST["nombre"]);
-                  $stmt->bindParam(":cuit", $_POST["cuit"]);
-                  $stmt->bindParam(":email", $_POST["email"]);
+                  $stmt->bindParam(":nombreFantasia", $_POST["nombreFantasia"]);
+                  $stmt->bindParam(":razonSocial", $_POST["razSoc"]);
+                  $stmt->bindParam(":cuitCuil", $_POST["cuitCuil"]);
+                  $stmt->bindParam(":tipoFactura", $_POST["tipoFactura"]);
                   $stmt->execute(); 
 
-                  echo "<script>swal('¡Cliente agregado exitosamente!')</script>";
+                  echo "<script>swal('¡Proveedor agregado exitosamente!')</script>";
                   
 
                }
@@ -90,10 +91,10 @@
 
 
 
-                  $query = "SELECT * FROM cliente";
+                  $query = "SELECT * FROM proveedor";
 
-                  if ($_POST["nombreConsulta"] !== "") {
-                    $query .=  " WHERE nombre='" . $_POST["nombreConsulta"] . "'";
+                  if ($_POST["razConsulta"] !== "") {
+                    $query .=  " WHERE `razon social`='" . $_POST["razConsulta"] . "'";
                   }
 
                   $stmt = $conn->prepare($query);
@@ -104,15 +105,16 @@
                   $consulta = '<table class="table table-bordered table-striped tabla table-responsive">
                     <thead>
                     <tr> 
-                    <th>Nombre</th>
-                    <th>CUIT</th>
-                    <th>E-mail</th>
+                    <th>Nombre de fantasia</th>
+                    <th>Raz&oacute;n social</th>
+                    <th>CUIT/CUIL</th>
+                    <th>Tipo de factura</th>
                     </tr>
                     </thead>
                     <tbody>';
 
                   for ($i=0; $i < count($result) ; $i++) { 
-                    $consulta .= "<tr><td>" . $result[$i][1] . "</td><td>" . $result[$i][2] . "</td><td>" . $result[$i][3] .  "</td></tr>";
+                    $consulta .= "<tr><td>" . $result[$i][1] . "</td><td>" . $result[$i][2] . "</td><td>" . $result[$i][3] . "</td><td>" . $result[$i][4] . "</td></tr>";
                   }
 
                   echo $consulta . '</tbody></table>';
@@ -140,7 +142,7 @@
 
 <!-- Modal -->
 
-<div id="modalAgregarCliente" class="modal fade" role="dialog">
+<div id="modalAgregarProveedor" class="modal fade" role="dialog">
 
   <div class="modal-dialog">
 
@@ -167,7 +169,7 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre" required>
+              <input type="text" name="nombreFantasia" class="form-control" placeholder="Ingresar nombre de fantasia" required>
 
             </div>
 
@@ -181,7 +183,7 @@
 
               <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
 
-              <input type="text" name="cuit" class="form-control" placeholder="Ingresar CUIT" required>
+              <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social" required>
 
             </div>
 
@@ -196,13 +198,28 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="email" class="form-control" placeholder="Ingresar e-mail">
+              <input type="text" name="cuitCuil" class="form-control" placeholder="Ingresar CUIT/CUIL">
 
             </div>
 
             
 
           </div>
+
+          <div class="form-group">
+
+            <div class="input-group">
+
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+              <input type="text" name="tipoFactura" class="form-control" placeholder="Ingresar tipo de factura">
+
+            </div>
+
+            
+
+          </div>
+
 
         </div>
 
@@ -211,7 +228,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
 
-        <button type="submit" name="agregar" class="btn btn-primary">Guardar cliente</button>
+        <button type="submit" name="agregar" class="btn btn-primary">Guardar proveedor</button>
 
       </div>
 
@@ -225,7 +242,7 @@
 
 
 
-<div id="modalConsultaCliente" class="modal fade" role="dialog">
+<div id="modalConsultaProveedor" class="modal fade" role="dialog">
 
   <div class="modal-dialog">
 
@@ -238,7 +255,7 @@
 
         <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-        <h4 class="modal-title">Consultar datos de cliente</h4>
+        <h4 class="modal-title">Consultar datos de proveedor</h4>
 
       </div>
 
@@ -252,7 +269,7 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre (dejar en blanco si deseas ver a todos los clientes)">
+              <input type="text" name="razConsulta" class="form-control" placeholder="Ingresar raz&oacute;n social del proveedor (dejar en blanco para devolver todos)">
 
             </div>
 
