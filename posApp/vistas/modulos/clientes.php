@@ -93,7 +93,7 @@
                   $query = "SELECT * FROM cliente";
 
                   if ($_POST["nombreConsulta"] !== "") {
-                    $query .=  " WHERE nombre='" . $_POST["nombreConsulta"] . "'";
+                    $query .=  " WHERE id='" . $_POST["nombreConsulta"] . "'";
                   }
 
                   $stmt = $conn->prepare($query);
@@ -232,7 +232,7 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="consulta">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
@@ -252,7 +252,26 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre (dejar en blanco si deseas ver a todos los clientes)">
+              <!-- <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre (dejar en blanco si deseas ver a todos los clientes)"> -->
+
+              <select name="nombreConsulta" id="consulta">
+                <option value="">Todos los clientes</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM cliente";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["nombre"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
             </div>
 

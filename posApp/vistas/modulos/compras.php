@@ -111,15 +111,19 @@
 
               if (isset($_POST["agregar"])) {
 
-                  $query = "INSERT INTO compra (`nombre de fantasia`, `razon social`, `cuit cuil`, `numero de factura`, fecha, `tipo de factura`, `importe total`) VALUES (:nombre, :razSoc, :cuitCuil, :numFactura, :fecha, :tipoFactura, :importeTotal)";
+                  // $queryId = "SELECT * FROM proveedor WHERE id= " . $_POST["id"];
+                  // $stmt1 = $conn->prepare($queryId);
+                  // $stmt1->execute();
+                  // $result = $stmt1->fetchALL();
+                  // $proveedor_id = $result[0][0];
+
+
+                  $query = "INSERT INTO compra (proveedor_id, `numero de factura`, fecha, `importe total`) VALUES (:proveedor_id, :numFactura, :fecha, :importeTotal)";
                   $stmt = $conn->prepare($query);
-                  
-                  $stmt->bindParam(":nombre", $_POST["nombre"]);
-                  $stmt->bindParam(":razSoc", $_POST["razSoc"]);
-                  $stmt->bindParam(":cuitCuil", $_POST["cuitCuil"]);
+                     
+                  $stmt->bindParam(":proveedor_id", $_POST["id"]);
                   $stmt->bindParam(":numFactura", $_POST["numFactura"]);
                   $stmt->bindParam(":fecha", $_POST["fecha"]);
-                  $stmt->bindParam(":tipoFactura", $_POST["tipoFactura"]);
                   $stmt->bindParam(":importeTotal", $_POST["importeTotal"]);
                   
 
@@ -132,18 +136,15 @@
 
                if (isset($_POST["editar"])) {
 
-                  $razSoc = $_POST["razSoc"];
+                  $id = $_POST["id"];
                   $numFactura = $_POST["numFactura"];
-                  $nombreNew = $_POST["nombreNew"];
-                  $razSocNew = $_POST["razSocNew"];
-                  $cuitCuilNew = $_POST["cuitCuilNew"];
+                  $idNew = $_POST["idNew"];
                   $numFacturaNew = $_POST["numFacturaNew"];
                   $fechaNew = $_POST["fechaNew"];
-                  $tipoFacturaNew = $_POST["tipoFacturaNew"];
                   $importeTotalNew = $_POST["importeTotalNew"];
 
 
-                  $queryEditar = "UPDATE compra SET `nombre de fantasia` = '" . $nombreNew . "', `razon social` = '" . $razSocNew . "', `cuit cuil` = '" . $cuitCuilNew . "', `numero de factura` = '" . $numFacturaNew . "', fecha = '" . $fechaNew . "', `tipo de factura` = '" . $tipoFacturaNew . "', `importe total` = " . $importeTotalNew . " WHERE `razon social` = '" . $razSoc . "' AND `numero de factura` = '" . $numFactura . "'";
+                  $queryEditar = "UPDATE compra SET proveedor_id = " . $idNew . ", `numero de factura` = '" . $numFacturaNew . "', fecha = '" . $fechaNew . "', `importe total` = " . $importeTotalNew . " WHERE proveedor_id = " . $id . " AND `numero de factura` = '" . $numFactura . "'";
                   $stmt = $conn->prepare($queryEditar);
                   $stmt->execute();
 
@@ -160,9 +161,6 @@
                   $desde = $_POST["desde"];
                   $hasta = $_POST["hasta"];
                   $importes = $_POST["importes"];
-                  $queryVenta = "";
-
-                  //query a venta
 
 
                   if ($desde == '' && $hasta == '') {
@@ -269,33 +267,28 @@
                  $consulta = '<table class="table table-bordered table-striped tabla">
                   <thead>
                   <tr>
-                    <th>Id</th>
-                    <th>Nombre de fantasia</th>
-                    <th>Raz&oacute;n social</th>
-                    <th>CUIT/CUIL</th>
+                    <th>ID de compra</th> 
+                    <th>ID de proveedor/Raz&oacute;n social</th>
                     <th>N&uacute;mero de factura</th>
                     <th>Fecha de compra</th>
-                    <th>Tipo de factura</th>
                     <th>Importe total</th>
                     <th>Pago</th>
                   </tr>
                 </thead>
                   <tbody>';
 
-                 $sumaImportes = 0;
-                 $sumaIngresosFinales = 0;
 
                  for ($i=0; $i < count($resultCompra); $i++) { 
                    if (!is_null($resultCompra[$i])) {
-                    $consulta .=  "<tr><td>" . $resultCompra[$i]["id"] . "</td><td>" . $resultCompra[$i]["nombre de fantasia"] . "</td><td>" . $resultCompra[$i]["razon social"] . "</td><td>" . $resultCompra[$i]["cuit cuil"] . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . formatearFecha($resultCompra[$i]["fecha"]) . "</td><td>" . $resultCompra[$i]["tipo de factura"] . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
-                    $sumaImportes += $resultCompra[$i]["importe total"];
+                    $query = "SELECT `razon social` FROM proveedor WHERE id = " . $resultCompra[$i]["proveedor_id"];
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $result = $stmt->fetchALL();
+                    $razSoc = $result[0][0]; 
+                    $consulta .=  "<tr><td>" . $resultCompra[$i]["id"] . "</td><td>" .  $resultCompra[$i]["proveedor_id"] . " / " . $razSoc . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . formatearFecha($resultCompra[$i]["fecha"]) . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
                    }      
                    
                  }
-
-                 // if ($importes) {
-                 //  $consulta .= $sumaImportes . "<br>";
-                 // }
 
                  echo $consulta . '</tbody></table>';
                  
@@ -440,7 +433,7 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="agregar">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
@@ -455,17 +448,7 @@
         <div class="box-body">
 
           
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
-
-              <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre de fantas&iacute;a del proveedor">
-
-            </div>
-
-          </div>
+         
 
 
           <div class="form-group">
@@ -474,24 +457,34 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social" required>
+              <!-- <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social" required> -->
+
+              <select name="id" id="agregar">
+                <option value="">Ingresar raz&oacute;n social</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
+
+
+                ?>
+
+              </select>
 
             </div>
 
           </div>
 
 
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
-
-              <input type="text" name="cuitCuil" class="form-control" placeholder="Ingresar CUIT/CUIL" required>
-
-            </div>
-
-          </div>
+         
 
 
           <div class="form-group">
@@ -507,17 +500,7 @@
           </div>
 
 
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
-
-              <input type="text" name="tipoFactura" class="form-control" placeholder="Ingresar tipo de factura" required>
-
-            </div>
-
-          </div>
+          
 
           Fecha de compra
 
@@ -598,17 +581,25 @@
           Ingres&aacute; los datos de la compra que quieras editar <br><br>
 
 
-          <div class="form-group">
+          <select name="id" id="agregar">
+                <option value="">Ingresar raz&oacute;n social</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
 
-            <div class="input-group">
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
 
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social">
+                ?>
 
-            </div>
-
-          </div>
+              </select>
 
 
           <div class="form-group">
@@ -631,31 +622,6 @@
 
 
           
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
-
-              <input type="text" name="nombreNew" class="form-control" placeholder="Ingresar nombre de fantas&iacute;a del proveedor">
-
-            </div>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
-
-              <input type="text" name="razSocNew" class="form-control" placeholder="Ingresar raz&oacute;n social" required>
-
-            </div>
-
-          </div>
-
 
           <div class="form-group">
 
@@ -663,7 +629,25 @@
 
               <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
-              <input type="text" name="cuitCuilNew" class="form-control" placeholder="Ingresar CUIT/CUIL" required>
+              <select name="idNew" id="agregar">
+                <option value="">Ingresar raz&oacute;n social</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
+
+
+                ?>
+
+              </select>
 
             </div>
 
