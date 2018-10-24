@@ -254,7 +254,7 @@
 
               <!-- <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre (dejar en blanco si deseas ver a todos los clientes)"> -->
 
-              <select name="nombreConsulta" id="consulta">
+              <select class="form-control" name="nombreConsulta" id="consulta">
                 <option value="">Todos los clientes</option>
                 <?php 
                   require_once("conexion.php");

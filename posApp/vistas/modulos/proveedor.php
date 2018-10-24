@@ -94,7 +94,7 @@
                   $query = "SELECT * FROM proveedor";
 
                   if ($_POST["razConsulta"] !== "") {
-                    $query .=  " WHERE `razon social`='" . $_POST["razConsulta"] . "'";
+                    $query .=  " WHERE id= " . $_POST["razConsulta"];
                   }
 
                   $stmt = $conn->prepare($query);
@@ -155,7 +155,7 @@
 
         <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-        <h4 class="modal-title">Agregar cliente</h4>
+        <h4 class="modal-title">Agregar proveedor</h4>
 
       </div>
 
@@ -249,7 +249,7 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="consulta">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
@@ -269,7 +269,25 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="razConsulta" class="form-control" placeholder="Ingresar raz&oacute;n social del proveedor (dejar en blanco para devolver todos)">
+              <select class="form-control" name="razConsulta" id="consulta">
+                <option value="">Todos los proveedores</option>
+
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
             </div>
 

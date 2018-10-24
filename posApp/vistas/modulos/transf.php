@@ -7,6 +7,20 @@
     $("#lista").children().removeClass();
     $("#transf").addClass("active");
 
+    $("#fecha").hide();
+
+    $("#siono").change(function(){
+
+
+      if(this.value == 'si') {
+        $("#fecha").fadeIn();
+      } else {
+        $("#fecha").fadeOut();
+
+      }
+
+    })
+
   });
 
 </script>
@@ -108,16 +122,17 @@
                     $stmt->bindParam(":tipoFactura", $_POST["tipoFactura"]);
                     $stmt->bindParam(":importeTotal", $_POST["importeTotal"]);
                     $stmt->bindParam(":realizado", $_POST["realizado"]);
+                    $stmt->execute(); 
 
-                    if($_POST["fecha"]){
-                      $queryFecha = "INSERT INTO transferencia (fecha) VALUES (:fecha)";
-                      $stmt1->prepare($queryFecha);
-                      $stmt1->bindParam(":fecha", $_POST["fecha"]);
+
+                    if($_POST["agregarFecha"]){
+                      $queryFecha = "UPDATE transferencia SET fecha = '" . $_POST["agregarFecha"] . "' WHERE nombre = '" . $_POST["nombre"] . "' AND `numero de factura` = '" . $_POST["numFactura"] . "'";
+                      $stmt1 = $conn->prepare($queryFecha);
                       $stmt1->execute();
                     }
                     
 
-                    $stmt->execute(); 
+                    
 
                     echo "<script>swal('Transferencia agregada exitosamente!')</script>";
 
@@ -125,11 +140,12 @@
 
                  if (isset($_POST["imputar"])) {
 
-                    $nombreImputar = $_POST["nombreImputar"];
+                    $nombre = $_POST["nombreImputar"];
                     $numFacturaImputar = $_POST["numFacturaImputar"];
+                    $fechaImput = $_POST["fechaImput"];
                    
 
-                    $queryActualizar = "UPDATE transferencia SET realizado = 'si' WHERE nombre ='" . $nombreImputar . "' AND `numero de factura` = '" . $numFacturaImputar . "'";
+                    $queryActualizar = "UPDATE transferencia SET realizado = 'si', fecha = '" . $fechaImput . "' WHERE nombre = '" . $nombre . "' AND `numero de factura` = '" . $numFacturaImputar . "'";
 
                     $stmt = $conn->prepare($queryActualizar);
                     $stmt->execute();
@@ -166,7 +182,7 @@
                     if ($nombreConsulta !== '') {
 
 
-                      if (strlen($queryTransf) == 26) {
+                      if (strlen($queryTransf) == 27) {
 
                         $queryTransf .= " WHERE nombre = '" . $nombreConsulta . "'";
 
@@ -276,7 +292,7 @@
 
           <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-          <h4 class="modal-title">Agregar Transferencia</h4>
+          <h4 class="modal-title">Agregar transferencia</h4>
 
         </div>
 
@@ -293,7 +309,26 @@
 
             <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-            <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre del proveedor" required>
+
+            <select class="form-control" name="nombre" id="agregar" required>
+                <option value="">Todos los proveedores</option>
+
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["razon social"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
           </div>
 
@@ -306,7 +341,7 @@
 
             <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
-            <input type="text" name="cuitCuil" class="form-control" placeholder="Ingresar n&uacute;mero de Cuit">
+            <input type="text" name="cuitCuil" class="form-control" placeholder="Ingresar n&uacute;mero de CUIT/CUIL">
 
           </div>
 
@@ -358,7 +393,14 @@
 
             <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
 
-            <input type="text" name="tipoFactura" class="form-control" placeholder="Ingresar tipo de factura" required>
+
+            <select class="form-control" name="tipoFactura" form="agregar" required>
+                <option value="">Ingresar tipo de factura</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+
+              </select>
 
           </div>
 
@@ -381,15 +423,19 @@
 
 
         Ingresar si la transferencia fue realizada
+
         <div class="form-group">
 
             <div class="input-group">
+              
+              <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
  
 
-               <select name="realizado" form="agregar">
+               <select class="form-control" name="realizado" form="agregar" id="siono">
 
-                <option value="si">S&iacute;</option>
                 <option value="no">No</option>
+                <option value="si">S&iacute;</option>
 
               </select> 
 
@@ -399,7 +445,7 @@
 
 
 
-        
+        <div id="fecha">
         Fecha de realizaci&oacute;n
         <div class="form-group">
 
@@ -407,10 +453,11 @@
 
             <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
 
-            <input type="date" name="fecha" class="form-control"">
+            <input type="date" name="agregarFecha" class="form-control"">
 
           </div>
 
+        </div>
         </div>
 
 
@@ -451,7 +498,7 @@
 
         <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-        <h4 class="modal-title">Consultar datos de venta</h4>
+        <h4 class="modal-title">Consultar datos de transferencia</h4>
 
       </div>
 
@@ -470,7 +517,26 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre o dejar en blanco si desea consultar mediante otros par&aacute;metros">
+
+              <select class="form-control" name="nombreConsulta" id="consultar">
+                <option value="">Todos los proveedores</option>
+
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["razon social"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
             </div>
 
@@ -524,9 +590,9 @@
 
             <div class="input-group">
 
-              
+              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
 
-               <select name="realizado" form="consultar">
+               <select class="form-control" name="realizado" form="consultar">
                 <option value="todas">Todas las transferencias</option>
                 <option value="si">Solo realizadas</option>
                 <option value="no">Solo pendientes</option>
@@ -564,7 +630,7 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="imputar">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
@@ -586,7 +652,27 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreImputar" class="form-control" placeholder="Ingresar nombre" required>
+
+              <select class="form-control" name="nombreImputar" id="imputar" required>
+                <option value="">Ingresar proveedor</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["razon social"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
+
+
 
             </div>
 
@@ -608,6 +694,22 @@
             
 
           </div>
+
+          
+          Fecha de realizaci&oacute;n
+
+        <div class="form-group">
+
+          <div class="input-group">
+
+            <span class="input-group-addon"><i class="fa fa-calendar-alt"></i></span>
+
+            <input type="date" name="fechaImput" class="form-control"">
+
+          </div>
+
+        </div>
+
 
         </div>
 

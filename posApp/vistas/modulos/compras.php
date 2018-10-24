@@ -6,6 +6,18 @@
 
     $("#lista").children().removeClass();
     $("#compras").addClass("active");
+
+    $("#cng").hide();
+
+    $("#check").change(function(){
+
+      if(this.checked){
+        $("#cng").fadeIn();
+      } else {
+        $("#cng").fadeOut();
+      }
+
+    })
     
 
   });
@@ -109,6 +121,16 @@
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 
+                function formatearFecha($fecha) {
+                 $year =  substr($fecha, 0, 4);
+                 $mes = substr($fecha, 5, 2);
+                 $dia = substr($fecha, 8, 2);
+
+                 return $dia . "-" . $mes . "-" . $year;
+                 
+                }
+
+
               if (isset($_POST["agregar"])) {
 
                   // $queryId = "SELECT * FROM proveedor WHERE id= " . $_POST["id"];
@@ -117,14 +139,35 @@
                   // $result = $stmt1->fetchALL();
                   // $proveedor_id = $result[0][0];
 
+                  $queryProveedor = "SELECT `tipo de factura` FROM proveedor WHERE id = " . $_POST["id"];
+                  $stmtP = $conn->prepare($queryProveedor);
+                  $stmtP->execute();
+                  $result = $stmtP->fetchALL();
 
-                  $query = "INSERT INTO compra (proveedor_id, `numero de factura`, fecha, `importe total`) VALUES (:proveedor_id, :numFactura, :fecha, :importeTotal)";
+                  $tipoFactura = $result[0][0];
+
+                  $importeNeto = $_POST["importeTotal"] - $_POST["cng"];
+                  $iva = 0;
+
+                  if ($tipoFactura == 'A') {
+
+                    $iva = $importeNeto * 0.21;
+                    $importeNeto *= 0.79;
+                    
+                  }
+
+
+                  $query = "INSERT INTO compra (proveedor_id, `numero de factura`, fecha, `importe total`, cng, iva, `importe neto`) VALUES (:proveedor_id, :numFactura, :fecha, :importeTotal, :cng, :iva, :importeNeto)";
                   $stmt = $conn->prepare($query);
                      
                   $stmt->bindParam(":proveedor_id", $_POST["id"]);
                   $stmt->bindParam(":numFactura", $_POST["numFactura"]);
                   $stmt->bindParam(":fecha", $_POST["fecha"]);
                   $stmt->bindParam(":importeTotal", $_POST["importeTotal"]);
+                  $stmt->bindParam(":cng", $_POST["cng"]);
+                  $stmt->bindParam(":importeNeto", $importeNeto);
+                  $stmt->bindParam(":iva", $iva);
+
                   
 
                   $stmt->execute(); 
@@ -155,13 +198,15 @@
 
                if (isset($_POST["consultar"])) {
 
-                  $razSoc = $_POST["razSoc"];
+                  $proveedor_id = $_POST["razSoc"];
                   $queCompras = $_POST["queCompras"];
                   $queFactura = $_POST["queFactura"];
                   $desde = $_POST["desde"];
                   $hasta = $_POST["hasta"];
                   $importes = $_POST["importes"];
 
+
+                  // por fechas
 
                   if ($desde == '' && $hasta == '') {
 
@@ -181,16 +226,19 @@
 
                   }
 
-                  if ($razSoc !== '') {
+                  // por proveedor
+
+
+                  if ($proveedor_id !== '') {
 
 
                     if (strlen($queryCompra) == 20) {
 
-                      $queryCompra .= " WHERE `razon social` = '" . $razSoc . "'";
+                      $queryCompra .= " WHERE proveedor_id = '" . $proveedor_id . "'";
 
                     } else {
 
-                      $queryCompra .= " AND `razon social` = '" . $razSoc . "'";
+                      $queryCompra .= " AND proveedor_id = '" . $proveedor_id . "'";
 
                     }
 
@@ -200,6 +248,7 @@
                   $stmt1->execute();
                   $resultCompra = $stmt1->fetchAll();
 
+                  // por pagas o no pagas
 
                   if ($queCompras == "pagas") {
 
@@ -227,40 +276,29 @@
 
                   }
 
-                  if ($queFactura == "A") {
+              
 
-                    for ($i=0; $i < count($resultCompra) ; $i++) { 
-                      
-                      if ($resultCompra[$i]["tipo de factura"] == "B" || $resultCompra[$i]["tipo de factura"] == "C"){
+                  // por tipo de factura
 
-                        $resultCompra[$i] = NULL;
 
+                  for ($j=0; $j < count($resultCompra); $j++) { 
+                    
+                      $queryA = "SELECT `tipo de factura` FROM proveedor WHERE id = " . $resultCompra[$j]["proveedor_id"];
+
+                      $stmt = $conn->prepare($queryA);
+                      $stmt->execute();
+                      $result = $stmt->fetchALL();
+                      $tipoFactura = $result[0][0];
+
+
+                      if ($queFactura == 'A' && $tipoFactura != 'A') {
+                        $resultCompra[$j] = NULL;
+                      } else if ($queFactura == 'C' && $tipoFactura != 'C') {
+                        $resultCompra[$j] = NULL;
                       }
-
-                    }
-
-                  } else if ($queFactura == "C") {
-
-                    for ($i=0; $i < count($resultCompra) ; $i++) { 
-                      
-                      if ($resultCompra[$i]["tipo de factura"] == "A" || $resultCompra[$i]["tipo de factura"] == "B"){
-
-                        $resultCompra[$i] = NULL;
-
-                      }
-
-                    }
-
+                    
                   }
 
-                function formatearFecha($fecha) {
-                   $year =  substr($fecha, 0, 4);
-                   $mes = substr($fecha, 5, 2);
-                   $dia = substr($fecha, 8, 2);
-
-                   return $dia . "-" . $mes . "-" . $year;
-                   
-                  }
 
                  
 
@@ -271,6 +309,9 @@
                     <th>ID de proveedor/Raz&oacute;n social</th>
                     <th>N&uacute;mero de factura</th>
                     <th>Fecha de compra</th>
+                    <th>Conceptos no gravados</th>
+                    <th>IVA</th>
+                    <th>Importe neto</th>
                     <th>Importe total</th>
                     <th>Pago</th>
                   </tr>
@@ -279,13 +320,18 @@
 
 
                  for ($i=0; $i < count($resultCompra); $i++) { 
-                   if (!is_null($resultCompra[$i])) {
+
+                  if (!is_null($resultCompra[$i])) {  
+
+
                     $query = "SELECT `razon social` FROM proveedor WHERE id = " . $resultCompra[$i]["proveedor_id"];
                     $stmt = $conn->prepare($query);
                     $stmt->execute();
                     $result = $stmt->fetchALL();
                     $razSoc = $result[0][0]; 
-                    $consulta .=  "<tr><td>" . $resultCompra[$i]["id"] . "</td><td>" .  $resultCompra[$i]["proveedor_id"] . " / " . $razSoc . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . formatearFecha($resultCompra[$i]["fecha"]) . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
+
+
+                    $consulta .=  "<tr><td>" . $resultCompra[$i]["id"] . "</td><td>" .  $resultCompra[$i]["proveedor_id"] . " / " . $razSoc . "</td><td>" . $resultCompra[$i]["numero de factura"] . "</td><td>" . formatearFecha($resultCompra[$i]["fecha"]) .  "</td><td>" . $resultCompra[$i]["cng"] . "</td><td>" . $resultCompra[$i]["iva"] . "</td><td>" . $resultCompra[$i]["importe neto"] . "</td><td>" . $resultCompra[$i]["importe total"] . "</td><td>" . $resultCompra[$i]["pago total"] . "</td></tr>";
                    }      
                    
                  }
@@ -297,22 +343,22 @@
 
                if (isset($_POST["agregarPago"])) {
 
-                  $razSoc = $_POST["razSoc"];
+                  $proveedor_id = $_POST["razSoc"];
                   $numFactura = $_POST["numFactura"];
                   $medioPago = $_POST["medioPago"];
                   $fechaPago = $_POST["fechaPago"];
                   $pago = $_POST["pago"];
 
-                  $queryCompraId = "SELECT id FROM compra WHERE `razon social` ='" . $razSoc . "' AND `numero de factura` = '" . $numFactura . "'";
-                  $stmt = $conn->prepare($queryCompraId);
-                  $stmt->execute();
-                  $result = $stmt->fetchALL();
+                  $queryCompraId = "SELECT id FROM compra WHERE proveedor_id ='" . $proveedor_id . "' AND `numero de factura` = '" . $numFactura . "'";
+                  $stmt1 = $conn->prepare($queryCompraId);
+                  $stmt1->execute();
+                  $result1 = $stmt1->fetchALL();
 
-                  $compra_id = $result[0][0];
+                  $compra_id = $result1[0][0];
                     
-                  $query = "INSERT INTO pago (compra_id, `medio de pago`, `fecha de pago`, pago) VALUES (:compra_id, :medioPago, :fechaPago, :pago)";
+                  $queryPago = "INSERT INTO pago (compra_id, `medio de pago`, `fecha de pago`, pago) VALUES (:compra_id, :medioPago, :fechaPago, :pago)";
 
-                  $stmt = $conn->prepare($query);
+                  $stmt = $conn->prepare($queryPago);
                   $stmt->bindParam(":compra_id", $compra_id);
                   $stmt->bindParam(":medioPago", $medioPago);
                   $stmt->bindParam(":fechaPago", $fechaPago);
@@ -388,7 +434,7 @@
                               <tbody>';
   
                 for ($i=0; $i < count($result); $i++) { 
-                  $consulta .= '<tr><td>' . $result[$i][3] . '</td><td>' . $result[$i][2] . '</td><td>' . $result[$i][4] . '</td></tr>';
+                  $consulta .= '<tr><td>' . date('d-m-Y', strtotime($result[$i][3])) . '</td><td>' . $result[$i][2] . '</td><td>' . $result[$i][4] . '</td></tr>';
                 }
   
                 $consulta .= '</tbody></table>';
@@ -459,7 +505,7 @@
 
               <!-- <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social" required> -->
 
-              <select name="id" id="agregar">
+              <select class="form-control" name="id" id="agregar">
                 <option value="">Ingresar raz&oacute;n social</option>
                 <?php 
                   require_once("conexion.php");
@@ -530,6 +576,21 @@
 
           </div>
 
+          Conceptos no gravados
+
+          <input type="checkbox" name="Conceptos no gravados" id="check">
+
+          <br><br>
+
+
+          <div id="cng">
+            
+            <input name="cng" type="number" value="0">
+
+          </div>
+
+          
+
 
 
 
@@ -580,8 +641,13 @@
           
           Ingres&aacute; los datos de la compra que quieras editar <br><br>
 
+          <div class="form-group">
+            <div class="input-group">
 
-          <select name="id" id="agregar">
+          <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+
+          <select class="form-control" name="id" id="agregar">
                 <option value="">Ingresar raz&oacute;n social</option>
                 <?php 
                   require_once("conexion.php");
@@ -600,6 +666,9 @@
                 ?>
 
               </select>
+
+            </div>
+          </div>
 
 
           <div class="form-group">
@@ -629,7 +698,7 @@
 
               <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
-              <select name="idNew" id="agregar">
+              <select class="form-control" name="idNew" id="agregar">
                 <option value="">Ingresar raz&oacute;n social</option>
                 <?php 
                   require_once("conexion.php");
@@ -661,19 +730,6 @@
               <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
 
               <input type="text" name="numFacturaNew" class="form-control" placeholder="Ingresar n&uacute;mero de factura" required>
-
-            </div>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <div class="input-group">
-
-              <span class="input-group-addon"><i class="fa fa-receipt"></i></span>
-
-              <input type="text" name="tipoFacturaNew" class="form-control" placeholder="Ingresar tipo de factura" required>
 
             </div>
 
@@ -759,7 +815,29 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social o dejar en blanco si desea consultar mediante otros par&aacute;metros">
+              <!-- <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social o dejar en blanco si desea consultar mediante otros par&aacute;metros"> -->
+
+              <select class="form-control" name="razSoc" id="consultar">
+                <option value="">Ingresar raz&oacute;n social</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
+
+
+                ?>
+
+              </select>
+
+
 
             </div>
 
@@ -774,7 +852,7 @@
 
               
 
-               <select name="queCompras" form="consultar">
+               <select class="form-control" name="queCompras" form="consultar">
                 <option value="todas">Todas las compras</option>
                 <option value="noPagas">S&oacute;lo compras no pagadas</option>
                 <option value="pagas">S&oacute;lo compras pagadas</option>
@@ -790,7 +868,7 @@
 
               
 
-               <select name="queFactura" form="consultar">
+               <select class="form-control" name="queFactura" form="consultar">
                 <option value="todas">Todas los tipo de factura</option>
                 <option value="A">S&oacute;lo facturas A</option>
                 <option value="C">S&oacute;lo facturas C</option>
@@ -921,7 +999,7 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="agregarPago">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
@@ -941,7 +1019,27 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social" required>
+              <!-- <input type="text" name="razSoc" class="form-control" placeholder="Ingresar raz&oacute;n social" required> -->
+
+              <select class="form-control" name="razSoc" id="agregarPago">
+                <option value="">Ingresar raz&oacute;n social</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM proveedor";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["razon social"] . "</option>";
+                  }
+
+
+                ?>
+
+              </select>
 
             </div>
 
@@ -984,7 +1082,15 @@
 
               <span class="input-group-addon"><i class="fa fa-money-check"></i></span>
 
-              <input type="text" name="medioPago" class="form-control" placeholder="Ingresar medio de pago" required>
+              <!-- <input type="text" name="medioPago" class="form-control" placeholder="Ingresar medio de pago" required> -->
+
+              <select class="form-control" name="medioPago" id="agregarPago">
+                <option value="Transferencia">Transferencia</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Tarjeta de cr&eacute;dito corporativa">Tarjeta de cr&eacute;dito corporativa</option>
+                <option value="Tarjeta de d&eacute;bito corporativa">Tarjeta de d&eacute;bito corporativa></option>
+              </select>
 
             </div>
 

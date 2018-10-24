@@ -122,18 +122,11 @@
 
               if (isset($_POST["agregar"])) {
 
-                  $queryClienteId = "SELECT id from cliente WHERE nombre='" . $_POST["nombre"] . "'";
-                  $stmt = $conn->prepare($queryClienteId);
-                  $stmt->execute();
-                  $result = $stmt->fetchALL();
-
-                  $cliente_id = $result[0][0];
-
                   
 
                   $query = "INSERT INTO venta (cliente_id, concepto, importe, `numero de factura`, `fecha de venta`) VALUES (:cliente_id, :concepto, :importe, :numFactura, :fechaVenta)";
                   $stmt = $conn->prepare($query);
-                  $stmt->bindParam(":cliente_id", $cliente_id);
+                  $stmt->bindParam(":cliente_id", $_POST["nombre"]);
                   $stmt->bindParam(":concepto", $_POST["concepto"]);
                   $stmt->bindParam(":importe", $_POST["importe"]);
                   $stmt->bindParam(":numFactura", $_POST["numFactura"]);
@@ -179,20 +172,15 @@
 
                   if ($nombreConsulta !== '') {
 
-                    $queryId = "SELECT id FROM cliente WHERE nombre = '" . $nombreConsulta . "'";
-                    $stmt = $conn->prepare($queryId);
-                    $stmt->execute();
-                    $result = $stmt->fetchAll();
-
-                    $cliente_id = $result[0][0];
+                    
 
                     if (strlen($queryVenta) == 19) {
 
-                      $queryVenta .= " WHERE cliente_id =" . $cliente_id;
+                      $queryVenta .= " WHERE cliente_id =" . $nombreConsulta;
 
                     } else {
 
-                      $queryVenta .= " AND cliente_id =" . $cliente_id ;
+                      $queryVenta .= " AND cliente_id =" . $nombreConsulta;
 
                     }
 
@@ -274,9 +262,9 @@
 
                if (isset($_POST["editar"])) {
 
-                  $nombre = $_POST["nombre"];
+                  $id = $_POST["nombre"];
                   $numFactura = $_POST["numFactura"];
-                  $nombreNew = $_POST["nombreNew"];
+                  $idNew = $_POST["nombreNew"];
                   $conceptoNew = $_POST["conceptoNew"];
                   $numFacturaNew = $_POST["numFacturaNew"];
                   $importeNew = $_POST["importeNew"];
@@ -288,21 +276,6 @@
                   $ingresoFinalNew = $_POST["ingresoFinalNew"];
                   $fechaPagoNew = $_POST["fechaPagoNew"];
 
-
-                  $queryId = "SELECT id FROM cliente WHERE nombre = '" . $nombre . "'";
-                  $stmt = $conn->prepare($queryId);
-                  $stmt->execute();
-                  $result = $stmt->fetchAll();
-
-                  $cliente_id = $result[0][0];
-
-
-                  $queryIdNuevo = "SELECT id FROM cliente WHERE nombre = '" . $nombreNew . "'";
-                  $stmt1 = $conn->prepare($queryIdNuevo);
-                  $stmt1->execute();
-                  $result1 = $stmt1->fetchAll();
-
-                  $cliente_idNew = $result1[0][0];
 
                   if ($ivaNew == "") {
                     $ivaNew = 0;
@@ -325,12 +298,14 @@
                   }
 
                   if (!$fechaPagoNew) {
-                    $queryEditar = "UPDATE venta SET cliente_id = ". $cliente_idNew .", concepto = '" . $conceptoNew . "', `numero de factura` ='" . $numFacturaNew . "', importe = " . $importeNew . ", `fecha de venta` = '" . $fechaNew . "', iva = " . $ivaNew . ", suss = " . $sussNew . ", ganancias = " . $gananciasNew . ", iibb = " . $iibbNew . ", `ingreso final` = " . $ingresoFinalNew . ", `fecha de pago` = NULL WHERE cliente_id = " . $cliente_id . " AND `numero de factura` = '" . $numFactura . "'";
+                    $queryEditar = "UPDATE venta SET cliente_id = ". $idNew .", concepto = '" . $conceptoNew . "', `numero de factura` ='" . $numFacturaNew . "', importe = " . $importeNew . ", `fecha de venta` = '" . $fechaNew . "', iva = " . $ivaNew . ", suss = " . $sussNew . ", ganancias = " . $gananciasNew . ", iibb = " . $iibbNew . ", `ingreso final` = " . $ingresoFinalNew . ", `fecha de pago` = NULL WHERE cliente_id = " . $id . " AND `numero de factura` = '" . $numFactura . "'";
                   } else {
                     $fechaPagoNew = "'" .  $fechaPagoNew . "'";
 
-                    $queryEditar = "UPDATE venta SET cliente_id = ". $cliente_idNew .", concepto = '" . $conceptoNew . "', `numero de factura` ='" . $numFacturaNew . "', importe = " . $importeNew . ", `fecha de venta` = '" . $fechaNew . "', iva = " . $ivaNew . ", suss = " . $sussNew . ", ganancias = " . $gananciasNew . ", iibb = " . $iibbNew . ", `ingreso final` = " . $ingresoFinalNew . ", `fecha de pago` = " . $fechaPagoNew . " WHERE cliente_id = " . $cliente_id . " AND `numero de factura` = '" . $numFactura . "'";
+                    $queryEditar = "UPDATE venta SET cliente_id = ". $idNew .", concepto = '" . $conceptoNew . "', `numero de factura` ='" . $numFacturaNew . "', importe = " . $importeNew . ", `fecha de venta` = '" . $fechaNew . "', iva = " . $ivaNew . ", suss = " . $sussNew . ", ganancias = " . $gananciasNew . ", iibb = " . $iibbNew . ", `ingreso final` = " . $ingresoFinalNew . ", `fecha de pago` = " . $fechaPagoNew . " WHERE cliente_id = " . $id . " AND `numero de factura` = '" . $numFactura . "'";
                   }
+
+                  var_dump($queryEditar);
 
                   $stmt = $conn->prepare($queryEditar);
                   $stmt->execute();
@@ -342,15 +317,8 @@
 
                if (isset($_POST["agregarPago"])) {
 
-                  $queryClienteId = "SELECT id from cliente WHERE nombre='" . $_POST["nombre"] . "'";
-                  $stmt = $conn->prepare($queryClienteId);
-                  $stmt->execute();
-                  $result = $stmt->fetchALL();
 
-                  $cliente_id = $result[0][0];
-
-
-                  $query = "UPDATE venta SET iva = " . $_POST["iva"] . ", suss = " . $_POST["suss"] . ", ganancias = " . $_POST["ganancias"] . ", iibb = " . $_POST["iibb"] . ", `ingreso final` = " . $_POST["ingresoFinal"] . ", `fecha de pago`= '" . $_POST["fechaPago"] . "' WHERE cliente_id = " . $cliente_id . " AND `numero de factura` ='" . $_POST["numFactura"] . "'";
+                  $query = "UPDATE venta SET iva = " . $_POST["iva"] . ", suss = " . $_POST["suss"] . ", ganancias = " . $_POST["ganancias"] . ", iibb = " . $_POST["iibb"] . ", `ingreso final` = " . $_POST["ingresoFinal"] . ", `fecha de pago`= '" . $_POST["fechaPago"] . "' WHERE cliente_id = " . $_POST["nombre"] . " AND `numero de factura` ='" . $_POST["numFactura"] . "'";
 
                   $stmt = $conn->prepare($query);
                   $stmt->execute(); 
@@ -389,7 +357,7 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="agregar">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
@@ -409,7 +377,24 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre del cliente" required>
+              <select class="form-control" name="nombre" id="agregar">
+                <option value="">Seleccionar cliente</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM cliente";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["nombre"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
             </div>
 
@@ -498,7 +483,7 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="editar">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
@@ -522,7 +507,24 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre de cliente">
+              <select class="form-control" name="nombre" id="editar">
+                <option value="">Seleccionar cliente</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM cliente";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["nombre"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
             </div>
 
@@ -555,7 +557,24 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreNew" class="form-control" placeholder="Ingresar nombre del cliente">
+              <select class="form-control" name="nombreNew" id="editar">
+                <option value="">Seleccionar cliente</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM cliente";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["nombre"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
             </div>
 
@@ -744,7 +763,24 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombreConsulta" class="form-control" placeholder="Ingresar nombre o dejar en blanco si desea consultar mediante otros par&aacute;metros">
+              <select class="form-control" name="nombreConsulta" id="consultar">
+                <option value="">Todos los clientes</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM cliente";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["nombre"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
             </div>
 
@@ -757,9 +793,9 @@
 
             <div class="input-group">
 
-              
+              <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
 
-               <select name="queVentas" form="consultar">
+               <select class="form-control" name="queVentas" form="consultar">
                 <option value="todas">Todas las ventas</option>
                 <option value="noPagas">S&oacute;lo ventas no pagadas</option>
                 <option value="pagas">S&oacute;lo ventas pagadas</option>
@@ -832,7 +868,7 @@
     <!-- Modal content-->
     <div class="modal-content">
 
-      <form role="form" method="post">
+      <form role="form" method="post" id="agregarPago">
 
       <div class="modal-header" style="background: #3c8dbc; color: white;">
 
@@ -852,7 +888,24 @@
 
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-              <input type="text" name="nombre" class="form-control" placeholder="Ingresar nombre del cliente" required>
+              <select class="form-control" name="nombre" id="agregarPago">
+                <option value="">Seleccionar cliente</option>
+                <?php 
+                  require_once("conexion.php");
+                  conectar();
+                  global $conn;
+                  $query = "SELECT * FROM cliente";
+                  $stmt = $conn->prepare($query);
+                  $stmt->execute();
+                  $result = $stmt->fetchALL();
+
+                  for ($i=0; $i < count($result); $i++) { 
+                    echo "<option value='" . $result[$i]["id"] . "'>" . $result[$i]["nombre"] . "</option>";
+                  }
+
+
+                ?>
+              </select>
 
             </div>
 

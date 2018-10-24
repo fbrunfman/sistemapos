@@ -192,7 +192,7 @@
 
               <span class="input-group-addon"><i class="fa fa-file-alt"></i></span>
 
-              <input type="text" name="nota" class="form-control input-lg" placeholder="Ingresar nota" required>
+              <input type="text" name="nota" class="form-control" placeholder="Ingresar nota" required>
 
 
             </div>
@@ -207,7 +207,9 @@
 
             <div class="input-group">
 
-              <select name="estado" id="form">
+              <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+
+              <select class="form-control" name="estado" id="form">
                 <option value="Urgente">Urgente</option>
                 <option value="Atenti">Atenti</option>
                 <option value="Tranqui">Tranqui</option>
