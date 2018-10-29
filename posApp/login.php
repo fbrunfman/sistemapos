@@ -66,8 +66,15 @@ catch(PDOException $e)
 <head>
 	<meta charset="UTF-8">
 	<title>Login</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+	<link rel="stylesheet" href="style.css">
+	<link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet"> 
+
+	
 </head>
 <body>
+
 	<?php 
 
 	if (isset($message)) {
@@ -75,17 +82,51 @@ catch(PDOException $e)
 	}
 
 	?>
-	<h1>Login</h1>
-		<form method="post" enctype="multipart/form-data">
-			<label>Usuario</label>
-			<input type="text" name="usuario" placeholder="Usuario" required>
-			<br><br>
-			<label>Contrase&ntilde;a</label>
-			<input type="password" placeholder="Contrase&ntilde;a" name="password">
-			<br><br>
-			<input type="submit" name="login" value="Login">
-		</form>
-	
-	
+
+
+
+
+	<div class="outer">
+	  	<div class="middle">
+		    <div class="inner">
+				
+					<div class="card mb-3" style="max-width: 18rem;"  id="sinborde">
+						<div class="card">
+							<h1 style="text-align: center; font-family: 'Dosis', sans-serif;">SistemaPOS<br><b>B&S</b></h1>
+							
+							<div class="form-group">
+								<div class="card-body" style="width: 18rem;" >
+									
+										<form method="post" enctype="multipart/form-data">
+											<label>Usuario</label>
+											<input type="text" name="usuario" placeholder="Usuario" required>
+											<br><br>
+											<label>Contrase&ntilde;a</label>
+											<input type="password" placeholder="Contrase&ntilde;a" name="password">
+											</div>
+											<br><br>
+											<script src="https://authedmine.com/lib/captcha.min.js" async></script>
+										    <div class="coinhive-captcha" 
+										        data-hashes="1024" 
+										        data-key="GhyV4MRpmvu4dGtcV0u9y2TEzAylx1c4"
+										        data-whitelabel="true"
+										        data-disable-elements="input[type=submit]"
+										       >
+										        <em>Loading Captcha...<br>
+										        If it doesn't load, please disable Adblock!</em>
+										    </div>
+											<div class="text-center col-ms">
+												<input type="submit" class="btn btn-primary" name="login" value="Ingresar">
+											</div>
+										</form>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				
+			</div>
+		</div>
+	</div>
 </body>
 </html>

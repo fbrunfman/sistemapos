@@ -69,6 +69,17 @@
             
           </a>
 
+        </li> 
+
+        <li id="facturacion">
+          
+          <a href="facturacion">
+            
+            <i class="fa fa-file-invoice-dollar"></i>
+            <span>Facturaci&oacute;n</span>
+            
+          </a>
+
         </li>     
 
       </ul>
